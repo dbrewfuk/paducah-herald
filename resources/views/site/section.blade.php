@@ -48,6 +48,20 @@
     color: var(--ink-5); border-bottom: 2px solid var(--ink-5); padding-bottom: 2px;
   }
   .pagination-next:hover { color: var(--navy-30); border-bottom-color: var(--navy-30); }
+
+  @media (max-width: 900px) {
+    .section-page-title { font-size: 36px; }
+    .topic-body { grid-template-columns: 1fr; }
+    .topic-main { padding-right: 0; border-right: none; }
+    .topic-sidebar { display: none; }
+  }
+  @media (max-width: 540px) {
+    .section-page-title { font-size: 28px; }
+    .section-page-header { padding-top: 20px; }
+    .art-grid-2 { grid-template-columns: 1fr; column-gap: 0; }
+    .art-grid-2 > .teaser:last-child::before { display: none; }
+    .art-grid-2 > .teaser:last-child { padding-top: 20px; border-top: 1px solid var(--paris-85); }
+  }
 </style>
 @endsection
 
@@ -74,6 +88,10 @@
             @if($article->imageObject('hero'))
               <div class="t-img-wrap">
                 <img class="t-img" src="{{ $article->image('hero', 'default') }}" alt="{{ $article->title }}" />
+              </div>
+            @elseif($article->hero_image_url)
+              <div class="t-img-wrap">
+                <img class="t-img" src="{{ $article->hero_image_url }}" alt="{{ $article->title }}" />
               </div>
             @endif
             <p class="t-flytitle">{{ $article->fly_title ?: $section->title }}</p>
