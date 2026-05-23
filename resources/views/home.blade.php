@@ -62,15 +62,17 @@
     <aside class="hero-sidebar">
       @foreach($rest->take(3) as $article)
         <a class="hero-sidebar-item" href="{{ route('articles.show', $article->slug) }}">
-          <div class="hero-sidebar-label">
-            {{ $article->fly_title ?: ($article->section ? $article->section->title : 'Article') }}
+          <div class="hero-sidebar-text">
+            <div class="hero-sidebar-label">
+              {{ $article->fly_title ?: ($article->section ? $article->section->title : 'Article') }}
+            </div>
+            <div class="hero-sidebar-headline">{{ $article->title }}</div>
           </div>
           @if($article->imageObject('hero'))
             <img class="hero-sidebar-img" src="{{ $article->image('hero', 'default') }}" alt="{{ $article->title }}" />
           @elseif($article->hero_image_url)
             <img class="hero-sidebar-img" src="{{ $article->hero_image_url }}" alt="{{ $article->title }}" />
           @endif
-          <div class="hero-sidebar-headline">{{ $article->title }}</div>
         </a>
       @endforeach
     </aside>
