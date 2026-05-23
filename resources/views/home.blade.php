@@ -97,29 +97,35 @@
       color: var(--ink-35);
     }
 
-    /* ── Sidebar cards: same stacked style ── */
+    /* ── Sidebar cards: 2-column grid ── */
     section.hero .hero-sidebar {
-      display: flex !important;
-      flex-direction: column;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
       overflow: visible;
       background: #fff;
       padding: 0 !important;
-      border-top: none;
+      border-top: 1px solid var(--paris-85);
+      gap: 0;
     }
     section.hero .hero-sidebar-item {
       display: flex !important;
       flex-direction: column !important;
       gap: 0 !important;
       min-width: 0;
-      border-top: 1px solid var(--paris-85);
+      border-top: none;
       border-right: none !important;
+      border-bottom: 1px solid var(--paris-85);
       padding: 0 !important;
       align-items: stretch;
+    }
+    /* Left column: right border as column divider */
+    section.hero .hero-sidebar-item:nth-child(odd) {
+      border-right: 1px solid var(--paris-85) !important;
     }
     section.hero .hero-sidebar-img {
       order: -1;
       width: 100% !important;
-      aspect-ratio: 3/2;
+      aspect-ratio: 4/3;
       height: auto !important;
       max-height: none !important;
       object-fit: cover;
@@ -127,8 +133,8 @@
       margin-bottom: 0 !important;
     }
     section.hero .hero-sidebar-text {
-      flex: none;
-      padding: 12px var(--gutter) 18px;
+      flex: 1;
+      padding: 9px 10px 12px;
       min-width: 0;
     }
     section.hero .hero-sidebar-label {
@@ -136,9 +142,16 @@
       margin-bottom: 4px;
     }
     section.hero .hero-sidebar-headline {
-      font-size: 17px !important;
+      font-size: 14px !important;
       color: var(--ink-5) !important;
-      line-height: 1.25;
+      line-height: 1.3;
+    }
+    section.hero .hero-sidebar-readtime {
+      display: block;
+      margin-top: 6px;
+      font-size: 11px;
+      font-family: var(--sans);
+      color: var(--ink-35);
     }
   }
 </style>
@@ -178,19 +191,22 @@
 
     {{-- Sidebar stories --}}
     <aside class="hero-sidebar">
-      @foreach($rest->take(3) as $article)
+      @foreach($rest->take(4) as $article)
         <a class="hero-sidebar-item" href="{{ route('articles.show', $article->slug) }}">
-          <div class="hero-sidebar-text">
-            <div class="hero-sidebar-label">
-              {{ $article->fly_title ?: ($article->section ? $article->section->title : 'Article') }}
-            </div>
-            <div class="hero-sidebar-headline">{{ $article->title }}</div>
-          </div>
           @if($article->imageObject('hero'))
             <img class="hero-sidebar-img" src="{{ $article->image('hero', 'default') }}" alt="{{ $article->title }}" />
           @elseif($article->hero_image_url)
             <img class="hero-sidebar-img" src="{{ $article->hero_image_url }}" alt="{{ $article->title }}" />
           @endif
+          <div class="hero-sidebar-text">
+            <div class="hero-sidebar-label">
+              {{ $article->fly_title ?: ($article->section ? $article->section->title : 'Article') }}
+            </div>
+            <div class="hero-sidebar-headline">{{ $article->title }}</div>
+            @if($article->read_time)
+              <span class="hero-sidebar-readtime">{{ $article->read_time }} min read</span>
+            @endif
+          </div>
         </a>
       @endforeach
     </aside>
