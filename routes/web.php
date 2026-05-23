@@ -6,11 +6,20 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\WeeklyEditionController;
 use App\Http\Controllers\WorldInBriefController;
 use App\Http\Controllers\InsiderEpisodeController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Middleware\ArticlePaywall;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/articles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
+Route::get('/articles/{slug}', [ArticleController::class, 'show'])
+    ->middleware(ArticlePaywall::class)
+    ->name('articles.show');
+
+// Payment routes
+Route::get('/subscribe',         [PaymentController::class, 'checkout'])->name('payment.checkout');
+Route::get('/payment/success',   [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/payment/cancel',    [PaymentController::class, 'cancel'])->name('payment.cancel');
 
 Route::get('/sections/{slug}', [SectionController::class, 'show'])->name('sections.show');
 
