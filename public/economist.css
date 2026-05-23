@@ -670,12 +670,82 @@ img { display: block; max-width: 100%; }
   .btn-subscribe { padding: 6px 14px; font-size: 13px; }
   .masthead-inner { height: 48px; }
 
-  /* Hero: tighter copy, still needs a solid min-height */
-  .hero-main { min-height: 300px; }
-  .hero-content { padding: 20px 16px; }
-  .hero-headline { font-size: 24px; }
-  .hero-desc { display: none; }
-  .hero-sidebar-item { min-width: 200px; }
+  /* ── Mobile hero: compact cover card (matches Economist mobile pattern) ──
+     Flip from full-bleed dark overlay to a white 2-col card: text left, thumb right */
+  .hero { background: #fff; border-bottom: 1px solid var(--paris-85); }
+  .hero-inner { display: block; }
+
+  .hero-main {
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr 120px !important;
+    column-gap: 14px !important;
+    align-items: start !important;
+    padding: 16px var(--gutter) 20px !important;
+    overflow: visible !important;
+    background: #fff;
+  }
+  /* Pull image out of absolute flow, put it in grid col 2 */
+  .hero-bg {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 80px !important;
+    object-fit: cover !important;
+    opacity: 1 !important;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+  .hero-gradient { display: none !important; }
+  .hero-content {
+    position: static !important;
+    padding: 0 !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+  .hero-flytitle { color: var(--red) !important; margin-bottom: 6px; }
+  .hero-headline { font-size: 20px !important; color: var(--ink-5) !important; margin-bottom: 6px; line-height: 1.2 !important; }
+  .hero-desc { display: block !important; font-size: 14px !important; color: var(--ink-35) !important; font-family: var(--serif); -webkit-line-clamp: 2; }
+
+  /* Sidebar becomes a compact list below the cover card */
+  .hero-sidebar {
+    display: block !important;
+    border-top: none !important;
+    overflow: visible !important;
+    background: #fff;
+    padding: 0 var(--gutter);
+  }
+  .hero-sidebar-item {
+    min-width: 0 !important;
+    flex-shrink: unset !important;
+    border-right: none !important;
+    border-top: 1px solid var(--paris-85) !important;
+    padding: 14px 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr 80px !important;
+    gap: 12px !important;
+    align-items: start !important;
+  }
+  .hero-sidebar-img {
+    grid-column: 2 !important;
+    grid-row: 1 / 3 !important;
+    width: 100% !important;
+    height: 60px !important;
+    object-fit: cover !important;
+    aspect-ratio: unset !important;
+    margin-bottom: 0 !important;
+  }
+  .hero-sidebar-label {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    color: var(--red) !important;
+  }
+  .hero-sidebar-headline {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    font-size: 15px !important;
+    color: var(--ink-5) !important;
+  }
 
   /* Grids: single column */
   .grid-3 { grid-template-columns: 1fr; column-gap: 0; }

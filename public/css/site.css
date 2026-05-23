@@ -36,7 +36,9 @@ body {
 }
 img { max-width: 100%; height: auto; display: block; }
 a { color: var(--brand-primary); text-decoration: none; }
-a:hover { text-decoration: underline; }
+/* Only underline hover on prose links, not nav/buttons */
+.article-body a:hover,
+.art-text a:hover { text-decoration: underline; }
 
 .container {
     max-width: var(--container);
