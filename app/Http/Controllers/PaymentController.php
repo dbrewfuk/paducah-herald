@@ -21,18 +21,16 @@ class PaymentController extends Controller
         $cancelUrl  = $intended;
 
         $session = StripeSession::create([
-            'mode'                 => 'payment',
-            'line_items'           => [[
+            'mode'                => 'subscription',
+            'line_items'          => [[
                 'price'    => config('services.stripe.price'),
                 'quantity' => 1,
             ]],
-            'success_url'          => $successUrl,
-            'cancel_url'           => $cancelUrl,
-            'payment_intent_data'  => [
-                'description' => 'The Paducah Herald – 30-day full access',
-            ],
-            'metadata' => [
-                'product' => 'herald_30day',
+            'success_url'         => $successUrl,
+            'cancel_url'          => $cancelUrl,
+            'subscription_data'   => [
+                'description' => 'The Paducah Herald – full access',
+                'metadata'    => ['product' => 'herald_subscription'],
             ],
         ]);
 
