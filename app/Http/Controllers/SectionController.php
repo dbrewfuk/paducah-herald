@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\GameScore;
 use App\Models\Section;
 
 class SectionController extends Controller
@@ -20,6 +21,16 @@ class SectionController extends Controller
             ->orderBy('publish_start_date', 'desc')
             ->paginate(10);
 
-        return view('site.section', compact('section', 'articles'));
+        // Pass scores to the Sports section
+        $scores = null;
+        if (strtolower($section->title) === 'sports') {
+            $scores = GameScore::where('published', true)
+                ->orderByRaw("CASE status WHEN 'final' THEN 0 WHEN 'upcoming' THEN 1 ELSE 2 END")
+                ->orderBy('game_date', 'desc')
+                ->limit(20)
+                ->get();
+        }
+
+        return view('site.section', compact('section', 'articles', 'scores'));
     }
 }

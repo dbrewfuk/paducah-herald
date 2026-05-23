@@ -49,6 +49,52 @@
   }
   .pagination-next:hover { color: var(--navy-30); border-bottom-color: var(--navy-30); }
 
+  /* ── Scores board ─────────────────────────────── */
+  .scores-board { margin-bottom: 32px; }
+  .scores-board-head {
+    font-size: 11px; font-family: var(--sans); font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-35);
+    padding-bottom: 10px; border-bottom: 3px solid var(--ink-5);
+    margin-bottom: 0;
+  }
+  .scores-sport-label {
+    font-size: 10px; font-family: var(--sans); font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--red);
+    padding: 14px 0 6px;
+  }
+  .scores-row {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--paris-85);
+  }
+  .scores-row:last-of-type { border-bottom: none; }
+  .scores-teams { margin-bottom: 4px; }
+  .scores-team {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 1px 0;
+  }
+  .scores-team-name {
+    font-family: var(--sans); font-size: 13px; color: var(--ink-20);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+  }
+  .scores-team--winner .scores-team-name { font-weight: 700; color: var(--ink-5); }
+  .scores-score {
+    font-family: var(--sans); font-size: 13px; font-weight: 700;
+    color: var(--ink-5); margin-left: 8px; flex-shrink: 0;
+  }
+  .scores-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .scores-status {
+    font-size: 11px; font-family: var(--sans); color: var(--ink-35);
+  }
+  .scores-status--final { color: var(--ink-35); }
+  .scores-status--ppd { color: #c44; }
+  .scores-venue {
+    font-size: 11px; font-family: var(--sans); color: var(--ink-70);
+  }
+  .scores-empty {
+    font-size: 13px; font-family: var(--sans); color: var(--ink-70);
+    padding: 16px 0;
+  }
+
   @media (max-width: 900px) {
     .section-page-title { font-size: 36px; }
     .topic-body { grid-template-columns: 1fr; }
@@ -108,7 +154,51 @@
   </main>
 
   <aside class="topic-sidebar">
-    <div style="height:90px;background:var(--la-95);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--sans);color:var(--ink-70);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px;">Advertisement</div>
+    {{-- Scores board on Sports section --}}
+    @if($scores !== null)
+      <div class="scores-board">
+        <div class="scores-board-head">First Region Scores</div>
+
+        @php
+          $bySport = $scores->groupBy('sport');
+        @endphp
+
+        @forelse($bySport as $sport => $games)
+          <div class="scores-sport-label">{{ $sport }}</div>
+          @foreach($games as $game)
+            <div class="scores-row {{ $game->status === 'upcoming' ? 'scores-row--upcoming' : '' }}">
+              <div class="scores-teams">
+                <div class="scores-team {{ $game->is_final && $game->home_score > $game->away_score ? 'scores-team--winner' : '' }}">
+                  <span class="scores-team-name">{{ $game->home_team }}</span>
+                  @if($game->is_final)<span class="scores-score">{{ $game->home_score }}</span>@endif
+                </div>
+                <div class="scores-team {{ $game->is_final && $game->away_score > $game->home_score ? 'scores-team--winner' : '' }}">
+                  <span class="scores-team-name">{{ $game->away_team }}</span>
+                  @if($game->is_final)<span class="scores-score">{{ $game->away_score }}</span>@endif
+                </div>
+              </div>
+              <div class="scores-meta">
+                @if($game->status === 'final')
+                  <span class="scores-status scores-status--final">Final{{ $game->notes ? ' · ' . $game->notes : '' }}</span>
+                @elseif($game->status === 'postponed')
+                  <span class="scores-status scores-status--ppd">Postponed</span>
+                @else
+                  <span class="scores-status">
+                    {{ $game->game_date ? $game->game_date->format('M j') : 'TBD' }}
+                    {{ $game->game_date ? ' · ' . $game->game_date->format('g:i a') : '' }}
+                  </span>
+                  @if($game->venue)<span class="scores-venue">{{ $game->venue }}</span>@endif
+                @endif
+              </div>
+            </div>
+          @endforeach
+        @empty
+          <p class="scores-empty">No scores yet.</p>
+        @endforelse
+      </div>
+    @else
+      <div style="height:90px;background:var(--la-95);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--sans);color:var(--ink-70);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px;">Advertisement</div>
+    @endif
   </aside>
 </div>
 

@@ -34,3 +34,4 @@ TwillRoutes::module('sections');
 TwillRoutes::module('weeklyEditions');
 TwillRoutes::module('worldInBriefs');
 TwillRoutes::module('insiderEpisodes');
+TwillRoutes::module('gameScores');

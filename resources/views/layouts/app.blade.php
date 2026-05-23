@@ -80,6 +80,8 @@
     @endforeach
     <a class="topnav-link @if(request()->routeIs('insider*')) is-active @endif"
        href="{{ route('insider.index') }}">Insider</a>
+    <a class="topnav-link @if(request()->routeIs('about')) is-active @endif"
+       href="{{ route('about') }}">About</a>
   </div>
 </nav>
 
@@ -105,8 +107,8 @@
     <div class="footer-cols">
       <div class="footer-col">
         <h4 class="footer-col-head">The Herald</h4>
-        <a href="#">About us</a>
-        <a href="#">Contact the newsroom</a>
+        <a href="{{ route('about') }}">About us</a>
+        <a href="{{ route('about') }}#contact">Contact the newsroom</a>
         <a href="#">Subscribe</a>
         <a href="{{ route('weekly-edition.index') }}">E-Edition</a>
       </div>
