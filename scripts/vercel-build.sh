@@ -3,10 +3,14 @@ set -eu
 
 cp .env.vercel .env
 
-# Inject Stripe credentials from Vercel project environment variables
-sed -i "s|__STRIPE_KEY__|${STRIPE_KEY:-}|g"     .env
-sed -i "s|__STRIPE_SECRET__|${STRIPE_SECRET:-}|g" .env
-sed -i "s|__STRIPE_PRICE__|${STRIPE_PRICE:-}|g"   .env
+# Inject Stripe credentials from Vercel project environment variables (PHP handles special chars)
+php -r "
+\$env = file_get_contents('.env');
+\$env = str_replace('__STRIPE_KEY__',    getenv('STRIPE_KEY')    ?: '', \$env);
+\$env = str_replace('__STRIPE_SECRET__', getenv('STRIPE_SECRET') ?: '', \$env);
+\$env = str_replace('__STRIPE_PRICE__',  getenv('STRIPE_PRICE')  ?: '', \$env);
+file_put_contents('.env', \$env);
+"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php composer-setup.php --install-dir=/tmp --filename=composer
 rm composer-setup.php
