@@ -4,75 +4,13 @@
 
 @section('styles')
 <style>
-  .home-hero {
-    background: var(--ink-5); color: #fff;
-    padding: 40px 0 0;
-  }
-  .home-hero-inner {
-    max-width: var(--max-w); margin: 0 auto;
-    padding: 0 var(--gutter) 40px;
-    display: grid; grid-template-columns: 1fr 320px; gap: 48px; align-items: start;
-  }
-  @media (max-width: 900px) {
-    .home-hero-inner { grid-template-columns: 1fr; gap: 0; padding-bottom: 0; }
-    .hero-sidebar { display: flex; overflow-x: auto; scrollbar-width: none; gap: 0; padding: 0; background: var(--ink-10); }
-    .hero-sidebar::-webkit-scrollbar { display: none; }
-    .hero-sidebar-item { min-width: 220px; flex-shrink: 0; border-top: none; border-right: 1px solid rgba(255,255,255,0.1); padding: 16px; }
-    .hero-headline { font-size: 26px; }
-    .hero-desc { font-size: 14px; }
-  }
-  @media (max-width: 540px) {
-    .home-hero-img { aspect-ratio: 4/3; }
-    .hero-content { padding: 20px 16px; }
-    .hero-headline { font-size: 22px; }
-    .hero-desc { display: none; }
-    .hero-sidebar-item { min-width: 180px; }
-    .hero-sidebar-headline { font-size: 15px; }
-  }
-  .hero-main-link { display: block; position: relative; }
-  .home-hero-img {
-    width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;
-    position: relative; height: auto; opacity: 1;
-  }
-  .hero-gradient {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
-  }
-  .hero-content {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 28px 24px;
-  }
-  .hero-flytitle {
-    font-size: 11px; font-family: var(--sans); font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.65);
-    margin-bottom: 10px;
-  }
-  .hero-headline {
-    font-family: var(--serif); font-size: 32px; font-weight: 500;
-    line-height: 1.12; color: #fff; margin-bottom: 10px;
-    text-wrap: balance;
-  }
-  .hero-desc {
-    font-family: var(--sans); font-size: 15px; color: rgba(255,255,255,0.75);
-    line-height: 1.4; margin-bottom: 0;
-  }
-  .hero-sidebar { padding-top: 8px; }
-  .hero-sidebar-item {
-    display: block; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.15);
-  }
-  .hero-sidebar-item:first-child { border-top: none; padding-top: 0; }
-  .hero-sidebar-label {
-    font-size: 10px; font-family: var(--sans); font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45);
-    margin-bottom: 8px;
-  }
-  .hero-sidebar-img {
-    width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; margin-bottom: 10px;
-  }
-  .hero-sidebar-headline {
-    font-family: var(--serif); font-size: 17px; color: rgba(255,255,255,0.9);
-    line-height: 1.3; text-wrap: balance;
-  }
+  /* Override hero image opacity — Economist dims to 0.5 for their palette;
+     news photos need to be more visible */
+  .hero-main .hero-bg { opacity: 0.82; }
+
+  /* Herald uses navy for section labels, not red */
+  .hero-main .hero-flytitle { color: rgba(255,255,255,0.7); }
+
   .home-section { padding: 40px 0; }
   .home-section + .home-section { border-top: 1px solid var(--paris-85); }
   .home-section-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--gutter); }
@@ -81,21 +19,30 @@
     padding: 0 var(--gutter); text-align: center;
     font-family: var(--serif); font-size: 22px; color: var(--ink-35);
   }
+
+  @media (max-width: 900px) {
+    .home-section { padding: 28px 0; }
+  }
+  @media (max-width: 540px) {
+    .home-section { padding: 20px 0; }
+  }
 </style>
 @endsection
 
 @section('content')
 
 @if($featured)
-<section class="home-hero">
-  <div class="home-hero-inner">
-    <a class="hero-main-link" href="{{ route('articles.show', $featured->slug) }}">
+<section class="hero">
+  <div class="hero-inner">
+
+    {{-- Main feature --}}
+    <a class="hero-main" href="{{ route('articles.show', $featured->slug) }}">
       @if($featured->imageObject('hero'))
-        <img class="home-hero-img" src="{{ $featured->image('hero', 'default') }}" alt="{{ $featured->title }}" />
+        <img class="hero-bg" src="{{ $featured->image('hero', 'default') }}" alt="{{ $featured->title }}" />
       @elseif($featured->hero_image_url)
-        <img class="home-hero-img" src="{{ $featured->hero_image_url }}" alt="{{ $featured->title }}" />
+        <img class="hero-bg" src="{{ $featured->hero_image_url }}" alt="{{ $featured->title }}" />
       @else
-        <div class="home-hero-img" style="background:var(--ink-20)"></div>
+        <div style="position:absolute;inset:0;background:var(--ink-20)"></div>
       @endif
       <div class="hero-gradient"></div>
       <div class="hero-content">
@@ -111,6 +58,7 @@
       </div>
     </a>
 
+    {{-- Sidebar stories --}}
     <aside class="hero-sidebar">
       @foreach($rest->take(3) as $article)
         <a class="hero-sidebar-item" href="{{ route('articles.show', $article->slug) }}">
@@ -126,6 +74,7 @@
         </a>
       @endforeach
     </aside>
+
   </div>
 </section>
 

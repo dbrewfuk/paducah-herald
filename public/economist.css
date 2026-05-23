@@ -609,8 +609,10 @@ img { display: block; max-width: 100%; }
   .hero-sidebar { border-left: none; border-top: 1px solid rgba(255,255,255,0.12); display: flex; overflow-x: auto; scrollbar-width: none; }
   .hero-sidebar::-webkit-scrollbar { display: none; }
   .hero-sidebar-item { min-width: 240px; flex-shrink: 0; border-bottom: none; border-right: 1px solid rgba(255,255,255,0.07); }
-  .hero-main { min-height: 280px; }
-  .hero-headline { font-size: 32px; }
+  /* min-height drives the image container height — without it the absolute-positioned
+     hero-bg has nothing to fill and the hero collapses */
+  .hero-main { min-height: 360px; }
+  .hero-headline { font-size: 30px; }
   .hero-desc { font-size: 16px; }
 
   /* Grids: 2 columns on tablet */
@@ -668,10 +670,11 @@ img { display: block; max-width: 100%; }
   .btn-subscribe { padding: 6px 14px; font-size: 13px; }
   .masthead-inner { height: 48px; }
 
-  /* Hero: tighter copy */
+  /* Hero: tighter copy, still needs a solid min-height */
+  .hero-main { min-height: 300px; }
   .hero-content { padding: 20px 16px; }
-  .hero-headline { font-size: 26px; }
-  .hero-desc { display: none; } /* clean up below the fold */
+  .hero-headline { font-size: 24px; }
+  .hero-desc { display: none; }
   .hero-sidebar-item { min-width: 200px; }
 
   /* Grids: single column */
