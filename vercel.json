@@ -1,4 +1,5 @@
 {
+  "installCommand": "sh scripts/vercel-install.sh",
   "buildCommand": "sh scripts/vercel-build.sh",
   "functions": {
     "api/index.php": {
