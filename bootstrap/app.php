@@ -4,14 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
-$app = Application::configure(basePath: dirname(__DIR__));
-
-// On Vercel serverless, redirect storage to /tmp
-if (getenv('APP_STORAGE_PATH')) {
-    $app->useStoragePath(getenv('APP_STORAGE_PATH'));
-}
-
-return $app
+$app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
@@ -23,3 +16,10 @@ return $app
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
+
+// On Vercel serverless, redirect storage to /tmp after the app is created.
+if (getenv('APP_STORAGE_PATH')) {
+    $app->useStoragePath(getenv('APP_STORAGE_PATH'));
+}
+
+return $app;
