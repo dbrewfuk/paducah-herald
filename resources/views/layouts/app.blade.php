@@ -41,6 +41,13 @@
       color: var(--ink-35);
       margin-top: 2px;
     }
+    /* Mobile: shrink wordmark so header doesn't cram */
+    @media (max-width: 540px) {
+      .herald-wordmark { font-size: 20px; }
+      .herald-wordmark span { font-size: 9px; margin-top: 2px; }
+      .btn-subscribe { padding: 6px 14px; font-size: 13px; }
+      .masthead-inner { height: 46px; }
+    }
   </style>
   @yield('styles')
 </head>
