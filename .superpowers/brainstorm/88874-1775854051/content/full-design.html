@@ -1,0 +1,156 @@
+<h2>Complete Feature Design</h2>
+<p class="subtitle">Google Analytics + Writing Personas with Claude AI</p>
+
+<div class="section">
+  <h3>1. Admin Sidebar</h3>
+  <div class="mockup">
+    <div class="mockup-header">Twill Admin Navigation</div>
+    <div class="mockup-body" style="padding:0;">
+      <div style="background:#000;color:#fff;padding:16px 20px;font-size:14px;">
+        <div style="padding:10px 0;border-bottom:1px solid #333;">📝 Articles</div>
+        <div style="padding:10px 0;border-bottom:1px solid #333;">✍️ Writing Personas <span style="color:#888;font-size:12px;">← NEW (module)</span></div>
+        <div style="padding:10px 0;border-bottom:1px solid #333;">🗄️ Media Library</div>
+        <div style="padding:10px 0;border-bottom:1px solid #333;opacity:0.5;">───── Settings ─────</div>
+        <div style="padding:10px 0;color:#7CB9E8;">⚙️ Site Settings <span style="color:#888;font-size:12px;">← NEW (GA ID + Claude API key)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>2. Site Settings Page</h3>
+  <div class="mockup">
+    <div class="mockup-header">Site Settings</div>
+    <div class="mockup-body">
+      <div style="margin-bottom:20px;">
+        <label style="font-weight:600;font-size:13px;display:block;margin-bottom:6px;">Google Analytics Measurement ID</label>
+        <input class="mock-input" placeholder="G-XXXXXXXXXX" style="width:100%;max-width:360px;">
+        <p style="font-size:12px;color:#888;margin-top:4px;">Leave empty to disable tracking.</p>
+      </div>
+      <div style="border-top:1px solid #eee;padding-top:20px;">
+        <label style="font-weight:600;font-size:13px;display:block;margin-bottom:6px;">Claude API Key</label>
+        <input class="mock-input" type="password" placeholder="sk-ant-..." style="width:100%;max-width:360px;">
+        <p style="font-size:12px;color:#888;margin-top:4px;">Required for AI writing features. Get your key at console.anthropic.com.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>3. Writing Personas (Module — CRUD list)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Writing Personas</div>
+    <div class="mockup-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <span style="font-size:13px;color:#888;">3 personas</span>
+        <button class="mock-button">+ Add Persona</button>
+      </div>
+      <div style="border:1px solid #eee;border-radius:6px;overflow:hidden;">
+        <div style="padding:12px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">News Brief</div>
+            <div style="font-size:12px;color:#888;margin-top:2px;">Concise, objective, AP-style reporting...</div>
+          </div>
+          <span style="font-size:12px;color:#888;">Edit →</span>
+        </div>
+        <div style="padding:12px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">Long-form Essay</div>
+            <div style="font-size:12px;color:#888;margin-top:2px;">Warm, curious, literary tone with vivid detail...</div>
+          </div>
+          <span style="font-size:12px;color:#888;">Edit →</span>
+        </div>
+        <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">Opinion Column</div>
+            <div style="font-size:12px;color:#888;margin-top:2px;">Provocative, first-person, strong point of view...</div>
+          </div>
+          <span style="font-size:12px;color:#888;">Edit →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>4. Persona Editor</h3>
+  <div class="mockup">
+    <div class="mockup-header">Edit Persona: News Brief</div>
+    <div class="mockup-body">
+      <div style="margin-bottom:16px;">
+        <label style="font-weight:600;font-size:13px;display:block;margin-bottom:6px;">Name</label>
+        <input class="mock-input" value="News Brief" style="width:100%;max-width:360px;">
+      </div>
+      <div>
+        <label style="font-weight:600;font-size:13px;display:block;margin-bottom:6px;">Voice Description</label>
+        <div style="width:100%;min-height:120px;border:1px solid #ddd;border-radius:6px;padding:12px;font-size:14px;color:#333;background:#fafafa;line-height:1.6;">
+          Write concise, objective news summaries in AP style. Lead with the most newsworthy fact. Use active voice. Keep sentences short. Attribute all claims. Avoid editorializing or adjectives that imply judgment.
+        </div>
+        <p style="font-size:12px;color:#888;margin-top:4px;">Describe the tone, style, audience, and rules. This is sent to Claude as the writing instruction.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>5. Article Editor — AI Actions</h3>
+  <div class="mockup">
+    <div class="mockup-header">Edit Article</div>
+    <div class="mockup-body">
+      <div style="margin-bottom:16px;">
+        <label style="font-weight:600;font-size:13px;display:block;margin-bottom:6px;">Title</label>
+        <input class="mock-input" value="City Council Approves New Transit Plan" style="width:100%;">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-weight:600;font-size:13px;display:block;margin-bottom:6px;">Body</label>
+        <div style="width:100%;min-height:80px;border:1px solid #ddd;border-radius:6px;padding:12px;color:#333;background:#fff;font-size:14px;">
+          The city council voted 7-2 last night to approve a $2.3 billion transit expansion...
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;padding:14px 18px;background:#F0F7EE;border:1px solid #C5DEC0;border-radius:8px;">
+        <select style="padding:8px 12px;border:1px solid #ccc;border-radius:6px;font-size:13px;background:#fff;">
+          <option>Select persona...</option>
+          <option selected>📝 News Brief</option>
+          <option>📖 Long-form Essay</option>
+          <option>💬 Opinion Column</option>
+        </select>
+        <button class="mock-button" style="background:#2C5F2D;color:#fff;border:none;">Generate from Title</button>
+        <button class="mock-button" style="background:#1a5276;color:#fff;border:none;">Restyle Draft</button>
+      </div>
+      <p style="font-size:11px;color:#888;margin-top:6px;">Select a persona, then generate a new draft from the title or restyle existing body text.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>6. No API Key State</h3>
+  <div class="mockup">
+    <div class="mockup-header">Edit Article — No Claude Key</div>
+    <div class="mockup-body">
+      <div style="background:#FFF8E7;border:1px solid #F0D88C;border-radius:8px;padding:14px 18px;">
+        <div style="font-weight:600;font-size:13px;color:#8B6914;margin-bottom:4px;">⚠️ Claude API key not configured</div>
+        <div style="font-size:13px;color:#5D4E1A;">AI writing features require a Claude API key. <a href="#" style="color:#1a5276;">Configure in Site Settings →</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>7. Public Site — GA Injection</h3>
+  <div class="mockup">
+    <div class="mockup-header">layouts/app.blade.php — &lt;head&gt;</div>
+    <div class="mockup-body" style="font-family:monospace;font-size:12px;line-height:1.8;color:#333;">
+      <div style="color:#888;">&lt;!-- Existing head content --&gt;</div>
+      <div>&lt;meta charset="utf-8"&gt;</div>
+      <div>&lt;title&gt;...&lt;/title&gt;</div>
+      <div style="color:#888;">&lt;!-- Fonts, CSS, etc. --&gt;</div>
+      <div style="margin-top:12px;padding:10px;background:#F0F7EE;border-radius:4px;border:1px solid #C5DEC0;">
+        <div style="color:#2C5F2D;font-weight:600;">// NEW — conditional GA snippet</div>
+        <div>@if($gaId = \A17\Twill\...\get('ga_id'))</div>
+        <div style="padding-left:16px;">&lt;script async src="gtag/js?id={{ $gaId }}"&gt;&lt;/script&gt;</div>
+        <div style="padding-left:16px;">&lt;script&gt; ... gtag('config', '{{ $gaId }}') &lt;/script&gt;</div>
+        <div>@endif</div>
+      </div>
+    </div>
+  </div>
+</div>

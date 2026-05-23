@@ -1,0 +1,8 @@
+{"type":"server-started","port":49754,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:49754","screen_dir":"/Users/new/Desktop/twill-magazine-starter/.superpowers/brainstorm/88874-1775854051/content","state_dir":"/Users/new/Desktop/twill-magazine-starter/.superpowers/brainstorm/88874-1775854051/state"}
+{"type":"screen-added","file":"/Users/new/Desktop/twill-magazine-starter/.superpowers/brainstorm/88874-1775854051/content/admin-layout.html"}
+{"type":"screen-added","file":"/Users/new/Desktop/twill-magazine-starter/.superpowers/brainstorm/88874-1775854051/content/full-design.html"}
+{"type":"screen-added","file":"/Users/new/Desktop/twill-magazine-starter/.superpowers/brainstorm/88874-1775854051/content/mockup-article-editor.html"}
+{"type":"screen-added","file":"/Users/new/Desktop/twill-magazine-starter/.superpowers/brainstorm/88874-1775854051/content/mockup-editor-v2.html"}
+{"type":"screen-added","file":"/Users/new/Desktop/twill-magazine-starter/.superpowers/brainstorm/88874-1775854051/content/mockup-editor-v3.html"}
+{"type":"screen-added","file":"/Users/new/Desktop/twill-magazine-starter/.superpowers/brainstorm/88874-1775854051/content/waiting.html"}
+{"type":"server-stopped","reason":"idle timeout"}

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Article Editor — AI Writing Mockup</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f5f5f5; color:#333; }
+
+  /* Twill-like admin shell */
+  .admin-shell { display:flex; min-height:100vh; }
+
+  /* Sidebar */
+  .sidebar { width:220px; background:#1a1a2e; color:#fff; padding:0; flex-shrink:0; }
+  .sidebar-brand { padding:20px; font-size:15px; font-weight:700; letter-spacing:0.5px; border-bottom:1px solid rgba(255,255,255,0.08); color:#a0a0c0; }
+  .sidebar-section { padding:12px 0; }
+  .sidebar-section-label { font-size:10px; text-transform:uppercase; letter-spacing:1.2px; color:#666; padding:8px 20px; }
+  .sidebar-item { display:flex; align-items:center; gap:10px; padding:10px 20px; font-size:13px; color:#b0b0c8; cursor:pointer; transition:background 0.15s; }
+  .sidebar-item:hover { background:rgba(255,255,255,0.05); color:#fff; }
+  .sidebar-item.active { background:rgba(255,255,255,0.08); color:#fff; border-left:3px solid #6c63ff; padding-left:17px; }
+  .sidebar-icon { width:18px; text-align:center; font-size:14px; }
+
+  /* Main content */
+  .main { flex:1; display:flex; flex-direction:column; }
+
+  /* Top bar */
+  .topbar { background:#fff; border-bottom:1px solid #e0e0e0; padding:16px 32px; display:flex; justify-content:space-between; align-items:center; }
+  .topbar h1 { font-size:18px; font-weight:600; }
+  .topbar-actions { display:flex; gap:10px; }
+  .btn { padding:8px 18px; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; border:1px solid #ddd; background:#fff; transition:all 0.15s; }
+  .btn:hover { background:#f0f0f0; }
+  .btn-primary { background:#2C5F2D; color:#fff; border-color:#2C5F2D; }
+  .btn-primary:hover { background:#1F4420; }
+
+  /* Content area */
+  .content { padding:32px; max-width:860px; flex:1; }
+
+  /* Form fields */
+  .field { margin-bottom:24px; }
+  .field label { display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#666; margin-bottom:8px; }
+  .field input[type="text"] { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:6px; font-size:15px; transition:border-color 0.15s; }
+  .field input[type="text"]:focus { outline:none; border-color:#6c63ff; }
+  .field textarea { width:100%; padding:14px; border:1px solid #ddd; border-radius:6px; font-size:15px; line-height:1.6; resize:vertical; min-height:200px; font-family:Georgia, 'Times New Roman', serif; }
+  .field textarea:focus { outline:none; border-color:#6c63ff; }
+  .field-hint { font-size:11px; color:#999; margin-top:4px; }
+
+  /* AI Action Bar */
+  .ai-bar { background:#f8f9fb; border:1px solid #e2e6ee; border-radius:10px; padding:16px 20px; margin-bottom:24px; }
+  .ai-bar-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .ai-bar-header .icon { width:28px; height:28px; background:linear-gradient(135deg, #6c63ff, #a855f7); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px; font-weight:700; }
+  .ai-bar-header h3 { font-size:13px; font-weight:600; color:#333; }
+  .ai-bar-header .badge { font-size:10px; background:#e8e6ff; color:#6c63ff; padding:2px 8px; border-radius:10px; font-weight:600; }
+  .ai-bar-controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .ai-select { padding:9px 14px; border:1px solid #ddd; border-radius:6px; font-size:13px; background:#fff; min-width:200px; cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }
+  .btn-ai { padding:9px 16px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; border:none; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+  .btn-generate { background:#6c63ff; color:#fff; }
+  .btn-generate:hover { background:#5a52d9; }
+  .btn-restyle { background:#fff; color:#6c63ff; border:1px solid #6c63ff; }
+  .btn-restyle:hover { background:#f0eeff; }
+  .ai-hint { font-size:11px; color:#999; margin-top:10px; }
+
+  /* Warning state */
+  .ai-warning { background:#fffbeb; border:1px solid #fcd34d; border-radius:10px; padding:16px 20px; margin-bottom:24px; display:none; }
+  .ai-warning .icon { color:#d97706; font-size:16px; }
+  .ai-warning p { font-size:13px; color:#92400e; line-height:1.5; }
+  .ai-warning a { color:#6c63ff; font-weight:500; }
+
+  /* Loading overlay */
+  .ai-loading { display:none; position:relative; }
+  .ai-loading.active { display:block; }
+  .ai-loading-overlay { background:rgba(108,99,255,0.04); border:2px dashed #6c63ff; border-radius:6px; padding:40px; text-align:center; min-height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; }
+  .spinner { width:24px; height:24px; border:3px solid #e2e6ee; border-top-color:#6c63ff; border-radius:50%; animation:spin 0.8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .ai-loading-text { font-size:13px; color:#6c63ff; font-weight:500; }
+
+  /* Tabs for demo states */
+  .demo-tabs { position:fixed; bottom:0; left:0; right:0; background:#1a1a2e; padding:12px 24px; display:flex; gap:8px; justify-content:center; z-index:100; }
+  .demo-tab { padding:8px 16px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; border:none; background:rgba(255,255,255,0.1); color:#b0b0c8; transition:all 0.15s; }
+  .demo-tab:hover { background:rgba(255,255,255,0.15); color:#fff; }
+  .demo-tab.active { background:#6c63ff; color:#fff; }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-brand">TWILL CMS</div>
+    <div class="sidebar-section">
+      <div class="sidebar-item active">
+        <span class="sidebar-icon">📝</span> Articles
+      </div>
+      <div class="sidebar-item">
+        <span class="sidebar-icon">✍️</span> Writing Personas
+      </div>
+      <div class="sidebar-item">
+        <span class="sidebar-icon">🗄️</span> Media Library
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Settings</div>
+      <div class="sidebar-item">
+        <span class="sidebar-icon">⚙️</span> Site Settings
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <h1>Edit Article</h1>
+      <div class="topbar-actions">
+        <button class="btn">Save as draft</button>
+        <button class="btn btn-primary">Publish</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Title -->
+      <div class="field">
+        <label>Title</label>
+        <input type="text" id="title" value="City Council Approves $2.3B Transit Expansion Plan">
+      </div>
+
+      <!-- AI Action Bar -->
+      <div class="ai-bar" id="aiBar">
+        <div class="ai-bar-header">
+          <div class="icon">AI</div>
+          <h3>Writing Assistant</h3>
+          <span class="badge">Powered by Claude</span>
+        </div>
+        <div class="ai-bar-controls">
+          <select class="ai-select" id="personaSelect">
+            <option value="">Select a persona...</option>
+            <option value="news">📰 News Brief</option>
+            <option value="essay">📖 Long-form Essay</option>
+            <option value="opinion">💬 Opinion Column</option>
+          </select>
+          <button class="btn-ai btn-generate" onclick="showState('generating')">
+            ✨ Generate from Title
+          </button>
+          <button class="btn-ai btn-restyle" onclick="showState('restyling')">
+            🔄 Restyle Draft
+          </button>
+        </div>
+        <div class="ai-hint">Select a persona, then generate a new article from the title or restyle the existing draft.</div>
+      </div>
+
+      <!-- Warning: No API Key -->
+      <div class="ai-warning" id="aiWarning">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <span class="icon">⚠️</span>
+          <div>
+            <p><strong>Claude API key not configured.</strong></p>
+            <p style="margin-top:4px;">AI writing features require a Claude API key. <a href="#">Configure in Site Settings →</a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div class="ai-loading" id="aiLoading">
+        <div class="ai-loading-overlay">
+          <div class="spinner"></div>
+          <div class="ai-loading-text" id="loadingText">Generating article with "News Brief" persona...</div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="field" id="bodyField">
+        <label>Body</label>
+        <textarea id="body">The city council voted 7-2 Tuesday evening to approve a sweeping $2.3 billion transit expansion that promises to reshape commuter routes across the metropolitan area.
+
+The plan, championed by Mayor Elena Rodriguez, includes three new light-rail lines, 45 additional bus routes, and a downtown transit hub expected to serve 180,000 daily riders by 2030.
+
+"This is the most significant infrastructure investment in our city's history," Rodriguez said at a packed council chamber. "We're building the transit system our grandchildren will ride."
+
+Council members Torres, Park, and Liu led the opposition, citing concerns about cost overruns and disruption to existing neighborhoods during the estimated six-year construction timeline.</textarea>
+      </div>
+
+      <div class="field">
+        <label>Hero Image</label>
+        <div style="border:2px dashed #ddd;border-radius:8px;padding:40px;text-align:center;color:#999;font-size:13px;cursor:pointer;">
+          Drop an image here or click to upload
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Demo state switcher -->
+<div class="demo-tabs">
+  <button class="demo-tab active" onclick="showState('normal')">Normal State</button>
+  <button class="demo-tab" onclick="showState('no-key')">No API Key</button>
+  <button class="demo-tab" onclick="showState('generating')">Generating...</button>
+  <button class="demo-tab" onclick="showState('done')">After Generate</button>
+</div>
+
+<script>
+function showState(state) {
+  // Reset
+  document.getElementById('aiBar').style.display = 'block';
+  document.getElementById('aiWarning').style.display = 'none';
+  document.getElementById('aiLoading').style.display = 'none';
+  document.getElementById('bodyField').style.display = 'block';
+
+  // Update tabs
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const body = document.getElementById('body');
+
+  if (state === 'no-key') {
+    document.getElementById('aiBar').style.display = 'none';
+    document.getElementById('aiWarning').style.display = 'block';
+  } else if (state === 'generating') {
+    document.getElementById('aiLoading').style.display = 'block';
+    document.getElementById('bodyField').style.display = 'none';
+    document.getElementById('loadingText').textContent = 'Generating article with "News Brief" persona...';
+  } else if (state === 'restyling') {
+    document.getElementById('aiLoading').style.display = 'block';
+    document.getElementById('bodyField').style.display = 'none';
+    document.getElementById('loadingText').textContent = 'Restyling draft with "News Brief" persona...';
+  } else if (state === 'done') {
+    body.value = `METRO — The City Council approved a $2.3 billion transit expansion plan in a 7-2 vote Tuesday, greenlighting three new light-rail lines and 45 additional bus routes.
+
+The plan includes a downtown transit hub projected to serve 180,000 daily riders by 2030. Mayor Elena Rodriguez called it "the most significant infrastructure investment in our city's history."
+
+Construction is expected to take six years. Council members Torres, Park, and Liu voted against the measure, citing cost overrun risks and neighborhood disruption concerns.
+
+The expansion is funded through a combination of federal grants and a proposed 0.25% sales tax increase, pending voter approval in November.`;
+    body.style.borderColor = '#6c63ff';
+    body.style.background = '#faf9ff';
+    setTimeout(() => {
+      body.style.borderColor = '#ddd';
+      body.style.background = '#fff';
+    }, 2000);
+    document.getElementById('personaSelect').value = 'news';
+  }
+}
+</script>
+
+</body>
+</html>

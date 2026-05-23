@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Article Editor — Writer Personas v2</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f5f5f5; color:#333; }
+
+  .admin-shell { display:flex; min-height:100vh; }
+
+  /* Sidebar */
+  .sidebar { width:220px; background:#1a1a2e; color:#fff; flex-shrink:0; }
+  .sidebar-brand { padding:20px; font-size:15px; font-weight:700; letter-spacing:0.5px; border-bottom:1px solid rgba(255,255,255,0.08); color:#a0a0c0; }
+  .sidebar-section { padding:12px 0; }
+  .sidebar-section-label { font-size:10px; text-transform:uppercase; letter-spacing:1.2px; color:#666; padding:8px 20px; }
+  .sidebar-item { display:flex; align-items:center; gap:10px; padding:10px 20px; font-size:13px; color:#b0b0c8; cursor:pointer; transition:background 0.15s; }
+  .sidebar-item:hover { background:rgba(255,255,255,0.05); color:#fff; }
+  .sidebar-item.active { background:rgba(255,255,255,0.08); color:#fff; border-left:3px solid #6c63ff; padding-left:17px; }
+  .sidebar-icon { width:18px; text-align:center; font-size:14px; }
+
+  /* Main */
+  .main { flex:1; display:flex; flex-direction:column; }
+  .topbar { background:#fff; border-bottom:1px solid #e0e0e0; padding:16px 32px; display:flex; justify-content:space-between; align-items:center; }
+  .topbar h1 { font-size:18px; font-weight:600; }
+  .topbar-actions { display:flex; gap:10px; }
+  .btn { padding:8px 18px; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; border:1px solid #ddd; background:#fff; transition:all 0.15s; }
+  .btn:hover { background:#f0f0f0; }
+  .btn-primary { background:#2C5F2D; color:#fff; border-color:#2C5F2D; }
+  .btn-primary:hover { background:#1F4420; }
+
+  .content { padding:32px; max-width:860px; flex:1; padding-bottom:80px; }
+
+  /* Fields */
+  .field { margin-bottom:24px; }
+  .field label { display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#666; margin-bottom:8px; }
+  .field input[type="text"] { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:6px; font-size:15px; }
+  .field input:focus, .field textarea:focus { outline:none; border-color:#6c63ff; }
+  .field textarea { width:100%; padding:14px; border:1px solid #ddd; border-radius:6px; font-size:15px; line-height:1.6; resize:vertical; min-height:200px; font-family:Georgia, 'Times New Roman', serif; }
+
+  /* AI Bar */
+  .ai-bar { background:#f8f9fb; border:1px solid #e2e6ee; border-radius:10px; padding:20px; margin-bottom:24px; }
+  .ai-bar-header { display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+  .ai-bar-header .icon { width:28px; height:28px; background:linear-gradient(135deg, #6c63ff, #a855f7); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; }
+  .ai-bar-header h3 { font-size:14px; font-weight:600; color:#333; }
+  .ai-bar-header .badge { font-size:10px; background:#e8e6ff; color:#6c63ff; padding:2px 8px; border-radius:10px; font-weight:600; }
+
+  /* Persona cards */
+  .persona-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap:12px; margin-bottom:16px; }
+  .persona-card { border:2px solid #e2e6ee; border-radius:10px; padding:14px; cursor:pointer; transition:all 0.2s; background:#fff; }
+  .persona-card:hover { border-color:#b0b0e0; box-shadow:0 2px 8px rgba(108,99,255,0.08); }
+  .persona-card.selected { border-color:#6c63ff; background:#faf9ff; box-shadow:0 0 0 3px rgba(108,99,255,0.12); }
+  .persona-avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:10px; }
+  .persona-name { font-size:14px; font-weight:700; color:#1a1a2e; margin-bottom:2px; }
+  .persona-specialty { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; border-radius:4px; display:inline-block; padding:2px 6px; }
+  .persona-desc { font-size:12px; color:#666; line-height:1.5; }
+
+  /* Persona-specific colors */
+  .persona-lucy .persona-avatar { background:#fee2e2; }
+  .persona-lucy .persona-specialty { color:#dc2626; background:#fef2f2; }
+  .persona-charles .persona-avatar { background:#dbeafe; }
+  .persona-charles .persona-specialty { color:#2563eb; background:#eff6ff; }
+  .persona-elena .persona-avatar { background:#fef3c7; }
+  .persona-elena .persona-specialty { color:#d97706; background:#fffbeb; }
+
+  /* Action row */
+  .ai-actions { display:flex; gap:10px; align-items:center; }
+  .btn-ai { padding:10px 18px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+  .btn-ai:disabled { opacity:0.4; cursor:not-allowed; }
+  .btn-generate { background:#6c63ff; color:#fff; }
+  .btn-generate:hover:not(:disabled) { background:#5a52d9; }
+  .btn-restyle { background:#fff; color:#6c63ff; border:1px solid #6c63ff; }
+  .btn-restyle:hover:not(:disabled) { background:#f0eeff; }
+
+  /* Selected persona info */
+  .selected-persona-info { display:none; background:#faf9ff; border:1px solid #e2e6ee; border-radius:8px; padding:12px 16px; margin-bottom:12px; font-size:12px; color:#555; line-height:1.6; }
+  .selected-persona-info.visible { display:block; }
+  .selected-persona-info strong { color:#333; }
+
+  /* Warning */
+  .ai-warning { background:#fffbeb; border:1px solid #fcd34d; border-radius:10px; padding:16px 20px; margin-bottom:24px; display:none; }
+  .ai-warning p { font-size:13px; color:#92400e; line-height:1.5; }
+  .ai-warning a { color:#6c63ff; font-weight:500; }
+
+  /* Loading */
+  .ai-loading { display:none; }
+  .ai-loading.active { display:block; }
+  .ai-loading-overlay { background:rgba(108,99,255,0.03); border:2px dashed rgba(108,99,255,0.3); border-radius:8px; padding:40px; text-align:center; min-height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; }
+  .spinner { width:24px; height:24px; border:3px solid #e2e6ee; border-top-color:#6c63ff; border-radius:50%; animation:spin 0.8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .ai-loading-text { font-size:13px; color:#6c63ff; font-weight:500; }
+  .ai-loading-sub { font-size:11px; color:#999; }
+
+  /* Demo tabs */
+  .demo-tabs { position:fixed; bottom:0; left:0; right:0; background:#1a1a2e; padding:10px 24px; display:flex; gap:8px; justify-content:center; z-index:100; }
+  .demo-tab { padding:8px 14px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; border:none; background:rgba(255,255,255,0.1); color:#b0b0c8; transition:all 0.15s; }
+  .demo-tab:hover { background:rgba(255,255,255,0.15); color:#fff; }
+  .demo-tab.active { background:#6c63ff; color:#fff; }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="sidebar">
+    <div class="sidebar-brand">TWILL CMS</div>
+    <div class="sidebar-section">
+      <div class="sidebar-item active"><span class="sidebar-icon">📝</span> Articles</div>
+      <div class="sidebar-item"><span class="sidebar-icon">✍️</span> Writing Personas</div>
+      <div class="sidebar-item"><span class="sidebar-icon">🗄️</span> Media Library</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Settings</div>
+      <div class="sidebar-item"><span class="sidebar-icon">⚙️</span> Site Settings</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>Edit Article</h1>
+      <div class="topbar-actions">
+        <button class="btn">Save as draft</button>
+        <button class="btn btn-primary">Publish</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="field">
+        <label>Title</label>
+        <input type="text" id="title" value="City Council Approves $2.3B Transit Expansion Plan">
+      </div>
+
+      <!-- AI Bar -->
+      <div class="ai-bar" id="aiBar">
+        <div class="ai-bar-header">
+          <div class="icon">AI</div>
+          <h3>Writing Assistant</h3>
+          <span class="badge">Powered by Claude</span>
+        </div>
+
+        <div class="persona-grid" id="personaGrid">
+          <div class="persona-card persona-lucy" data-persona="lucy" onclick="selectPersona(this)">
+            <div class="persona-avatar">👩‍💻</div>
+            <div class="persona-name">Lucy</div>
+            <div class="persona-specialty">Long-form</div>
+            <div class="persona-desc">Warm and curious. Crafts immersive narratives with vivid detail and a literary sensibility. Favours scene-setting and human-interest angles.</div>
+          </div>
+          <div class="persona-card persona-charles" data-persona="charles" onclick="selectPersona(this)">
+            <div class="persona-avatar">👨‍💼</div>
+            <div class="persona-name">Charles</div>
+            <div class="persona-specialty">News</div>
+            <div class="persona-desc">Veteran reporter. Objective, concise AP-style copy. Leads with the newsworthy fact, attributes every claim, zero editorializing.</div>
+          </div>
+          <div class="persona-card persona-elena" data-persona="elena" onclick="selectPersona(this)">
+            <div class="persona-avatar">👩‍🎤</div>
+            <div class="persona-name">Elena</div>
+            <div class="persona-specialty">Opinion</div>
+            <div class="persona-desc">Provocative first-person columnist. Strong point of view, rhetorical questions, memorable one-liners. Never sits on the fence.</div>
+          </div>
+        </div>
+
+        <div class="selected-persona-info" id="personaInfo"></div>
+
+        <div class="ai-actions">
+          <button class="btn-ai btn-generate" id="btnGenerate" disabled onclick="showState('generating')">✨ Generate from Title</button>
+          <button class="btn-ai btn-restyle" id="btnRestyle" disabled onclick="showState('restyling')">🔄 Restyle Draft</button>
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div class="ai-warning" id="aiWarning">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <span style="font-size:16px;">⚠️</span>
+          <div>
+            <p><strong>Claude API key not configured.</strong></p>
+            <p style="margin-top:4px;">AI writing features require a Claude API key. <a href="#">Configure in Site Settings →</a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="ai-loading" id="aiLoading">
+        <div class="ai-loading-overlay">
+          <div class="spinner"></div>
+          <div class="ai-loading-text" id="loadingText">Lucy is writing your article...</div>
+          <div class="ai-loading-sub" id="loadingSub">Using long-form persona with the article title</div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="field" id="bodyField">
+        <label>Body</label>
+        <textarea id="body">The city council voted 7-2 Tuesday evening to approve a sweeping $2.3 billion transit expansion that promises to reshape commuter routes across the metropolitan area.
+
+The plan, championed by Mayor Elena Rodriguez, includes three new light-rail lines, 45 additional bus routes, and a downtown transit hub expected to serve 180,000 daily riders by 2030.
+
+"This is the most significant infrastructure investment in our city's history," Rodriguez said at a packed council chamber. "We're building the transit system our grandchildren will ride."
+
+Council members Torres, Park, and Liu led the opposition, citing concerns about cost overruns and disruption to existing neighborhoods during the estimated six-year construction timeline.</textarea>
+      </div>
+
+      <div class="field">
+        <label>Hero Image</label>
+        <div style="border:2px dashed #ddd;border-radius:8px;padding:40px;text-align:center;color:#999;font-size:13px;">
+          Drop an image here or click to upload
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="demo-tabs">
+  <button class="demo-tab active" onclick="showState('normal')">Normal</button>
+  <button class="demo-tab" onclick="showState('selected')">Persona Selected</button>
+  <button class="demo-tab" onclick="showState('no-key')">No API Key</button>
+  <button class="demo-tab" onclick="showState('generating')">Generating...</button>
+  <button class="demo-tab" onclick="showState('done-lucy')">Result: Lucy</button>
+  <button class="demo-tab" onclick="showState('done-charles')">Result: Charles</button>
+</div>
+
+<script>
+let selectedPersona = null;
+
+const personas = {
+  lucy: { name:'Lucy', specialty:'long-form', emoji:'👩‍💻', info:'Lucy writes immersive, narrative-driven pieces. She\'ll expand the topic with vivid scene-setting, quotes, and human detail.' },
+  charles: { name:'Charles', specialty:'news', emoji:'👨‍💼', info:'Charles writes tight, objective news copy. He\'ll lead with the key fact and keep it under 300 words.' },
+  elena: { name:'Elena', specialty:'opinion', emoji:'👩‍🎤', info:'Elena writes bold opinion columns. She\'ll take a strong stance, use rhetorical devices, and aim for a memorable closing line.' }
+};
+
+function selectPersona(el) {
+  document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPersona = el.dataset.persona;
+
+  document.getElementById('btnGenerate').disabled = false;
+  document.getElementById('btnRestyle').disabled = false;
+
+  const info = document.getElementById('personaInfo');
+  const p = personas[selectedPersona];
+  info.innerHTML = '<strong>' + p.emoji + ' ' + p.name + ':</strong> ' + p.info;
+  info.classList.add('visible');
+}
+
+function showState(state) {
+  document.getElementById('aiBar').style.display = 'block';
+  document.getElementById('aiWarning').style.display = 'none';
+  document.getElementById('aiLoading').style.display = 'none';
+  document.getElementById('aiLoading').classList.remove('active');
+  document.getElementById('bodyField').style.display = 'block';
+
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  if(event && event.target) event.target.classList.add('active');
+
+  const body = document.getElementById('body');
+  body.style.borderColor = '#ddd';
+  body.style.background = '#fff';
+
+  if (state === 'normal') {
+    document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('btnGenerate').disabled = true;
+    document.getElementById('btnRestyle').disabled = true;
+    document.getElementById('personaInfo').classList.remove('visible');
+    selectedPersona = null;
+    body.value = "The city council voted 7-2 Tuesday evening to approve a sweeping $2.3 billion transit expansion that promises to reshape commuter routes across the metropolitan area.\n\nThe plan, championed by Mayor Elena Rodriguez, includes three new light-rail lines, 45 additional bus routes, and a downtown transit hub expected to serve 180,000 daily riders by 2030.\n\n\"This is the most significant infrastructure investment in our city's history,\" Rodriguez said at a packed council chamber. \"We're building the transit system our grandchildren will ride.\"\n\nCouncil members Torres, Park, and Liu led the opposition, citing concerns about cost overruns and disruption to existing neighborhoods during the estimated six-year construction timeline.";
+  }
+  else if (state === 'selected') {
+    const lucy = document.querySelector('[data-persona="lucy"]');
+    selectPersona(lucy);
+  }
+  else if (state === 'no-key') {
+    document.getElementById('aiBar').style.display = 'none';
+    document.getElementById('aiWarning').style.display = 'block';
+  }
+  else if (state === 'generating' || state === 'restyling') {
+    const p = personas[selectedPersona || 'lucy'];
+    if(!selectedPersona) {
+      const lucy = document.querySelector('[data-persona="lucy"]');
+      selectPersona(lucy);
+    }
+    document.getElementById('aiLoading').style.display = 'block';
+    document.getElementById('aiLoading').classList.add('active');
+    document.getElementById('bodyField').style.display = 'none';
+    document.getElementById('loadingText').textContent = p.name + ' is ' + (state === 'restyling' ? 'restyling' : 'writing') + ' your article...';
+    document.getElementById('loadingSub').textContent = 'Using ' + p.specialty + ' persona ' + (state === 'restyling' ? 'to restyle the draft' : 'with the article title');
+  }
+  else if (state === 'done-lucy') {
+    const lucy = document.querySelector('[data-persona="lucy"]');
+    selectPersona(lucy);
+    body.value = "The fluorescent lights of City Hall had never felt quite so charged.\n\nAt 9:47 on a humid Tuesday evening, seven hands rose in the packed council chamber — and with them, the trajectory of a city. The $2.3 billion transit expansion plan, a sprawling reimagining of how 1.2 million residents will move through their days, had cleared its final political hurdle.\n\nMayor Elena Rodriguez stood at the podium, her voice steady but her hands gripping the edges. \"This is the most significant infrastructure investment in our city's history,\" she said. Then, more quietly: \"We're building the transit system our grandchildren will ride.\"\n\nThe plan is staggering in scope. Three new light-rail lines will thread through neighborhoods that haven't seen public transit investment in decades. Forty-five bus routes will fill gaps that commuters have long navigated with car pools and creative scheduling. And at the center of it all: a downtown transit hub designed to handle 180,000 daily riders by 2030 — roughly the population of a mid-sized city passing through a single building every day.\n\nBut not everyone in the chamber shared Rodriguez's optimism. Council members Torres, Park, and Liu cast the two dissenting votes, their concerns sharpened by years of watching infrastructure promises balloon past their budgets.\n\n\"Six years of construction,\" Torres said flatly. \"Six years of detours, noise, and displaced small businesses. And that's if everything goes according to plan.\" He paused. \"When does anything go according to plan?\"\n\nOutside, a group of transit advocates who had camped in the lobby since morning erupted in cheers as the vote tally flashed on the monitor. A hand-painted sign bobbed above the crowd: TRAINS NOT LANES.";
+    body.style.borderColor = '#6c63ff';
+    body.style.background = '#faf9ff';
+    setTimeout(() => { body.style.borderColor = '#ddd'; body.style.background = '#fff'; }, 2500);
+  }
+  else if (state === 'done-charles') {
+    const charles = document.querySelector('[data-persona="charles"]');
+    selectPersona(charles);
+    body.value = "The City Council approved a $2.3 billion transit expansion plan in a 7-2 vote Tuesday evening.\n\nThe measure authorizes construction of three light-rail lines, 45 new bus routes, and a central transit hub projected to serve 180,000 daily riders by 2030.\n\nMayor Elena Rodriguez, who championed the plan, called it \"the most significant infrastructure investment in our city's history.\"\n\nCouncil members Torres, Park, and Liu opposed the measure. Torres cited concerns about cost overruns and disruption to neighborhoods during the estimated six-year construction period.\n\nFunding will come from a combination of federal transit grants and a proposed 0.25% sales tax increase subject to voter approval in November.\n\nConstruction on the first light-rail corridor is scheduled to begin in early 2027.";
+    body.style.borderColor = '#6c63ff';
+    body.style.background = '#faf9ff';
+    setTimeout(() => { body.style.borderColor = '#ddd'; body.style.background = '#fff'; }, 2500);
+  }
+}
+</script>
+
+</body>
+</html>

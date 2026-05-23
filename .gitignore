@@ -1,0 +1,24 @@
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.env.production
+.php-cs-fixer.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.idea
+/.vscode
+/.fleet
+/.zed
+
+# Keep the SQLite database for Vercel deployment
+# database/database.sqlite is intentionally NOT ignored
+
+# Vercel
+.vercel

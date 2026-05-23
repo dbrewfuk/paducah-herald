@@ -1,0 +1,79 @@
+# ==============================================================================
+# nginx vhost template — Twill Magazine Starter
+# ------------------------------------------------------------------------------
+# Substitute {{DOMAIN}} with the bare domain (no www) and drop this into
+# /etc/nginx/sites-available/{{DOMAIN}}, then symlink to sites-enabled.
+#
+# Assumes:
+#   - App lives at /var/www/{{DOMAIN}}
+#   - PHP 8.3-fpm socket at /var/run/php/php8.3-fpm.sock
+#   - Cloudflare Origin Certificate at /etc/ssl/cloudflare/{{DOMAIN}}.{pem,key}
+#   - Cloudflare SSL mode set to "Full (strict)" in the CF dashboard
+#
+# Note: this file uses `listen 443 ssl http2;` (old syntax) because some
+# Ubuntu 24.04 nginx builds reject the newer `http2 on;` directive.
+# ==============================================================================
+
+# HTTP → HTTPS redirect
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{DOMAIN}} www.{{DOMAIN}};
+    return 301 https://{{DOMAIN}}$request_uri;
+}
+
+# HTTPS (main)
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name {{DOMAIN}};
+
+    root /var/www/{{DOMAIN}}/public;
+    index index.php;
+
+    # Cloudflare Origin Certificate (15-year, Full strict mode)
+    ssl_certificate     /etc/ssl/cloudflare/{{DOMAIN}}.pem;
+    ssl_certificate_key /etc/ssl/cloudflare/{{DOMAIN}}.key;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+
+    client_max_body_size 32M;
+
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+
+# www → apex redirect (HTTPS)
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name www.{{DOMAIN}};
+
+    ssl_certificate     /etc/ssl/cloudflare/{{DOMAIN}}.pem;
+    ssl_certificate_key /etc/ssl/cloudflare/{{DOMAIN}}.key;
+
+    return 301 https://{{DOMAIN}}$request_uri;
+}

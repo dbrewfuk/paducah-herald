@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Article Editor — Writer Personas v3</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f5f5f5; color:#333; }
+
+  .admin-shell { display:flex; min-height:100vh; }
+
+  .sidebar { width:220px; background:#1a1a2e; color:#fff; flex-shrink:0; }
+  .sidebar-brand { padding:20px; font-size:15px; font-weight:700; letter-spacing:0.5px; border-bottom:1px solid rgba(255,255,255,0.08); color:#a0a0c0; }
+  .sidebar-section { padding:12px 0; }
+  .sidebar-section-label { font-size:10px; text-transform:uppercase; letter-spacing:1.2px; color:#666; padding:8px 20px; }
+  .sidebar-item { display:flex; align-items:center; gap:10px; padding:10px 20px; font-size:13px; color:#b0b0c8; cursor:pointer; transition:background 0.15s; }
+  .sidebar-item:hover { background:rgba(255,255,255,0.05); color:#fff; }
+  .sidebar-item.active { background:rgba(255,255,255,0.08); color:#fff; border-left:3px solid #6c63ff; padding-left:17px; }
+  .sidebar-icon { width:18px; text-align:center; font-size:14px; }
+
+  .main { flex:1; display:flex; flex-direction:column; }
+  .topbar { background:#fff; border-bottom:1px solid #e0e0e0; padding:16px 32px; display:flex; justify-content:space-between; align-items:center; }
+  .topbar h1 { font-size:18px; font-weight:600; }
+  .topbar-actions { display:flex; gap:10px; }
+  .btn { padding:8px 18px; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; border:1px solid #ddd; background:#fff; transition:all 0.15s; }
+  .btn:hover { background:#f0f0f0; }
+  .btn-primary { background:#2C5F2D; color:#fff; border-color:#2C5F2D; }
+  .btn-primary:hover { background:#1F4420; }
+
+  .content { padding:32px; max-width:900px; flex:1; padding-bottom:80px; }
+
+  .field { margin-bottom:24px; }
+  .field label { display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#666; margin-bottom:8px; }
+  .field input[type="text"] { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:6px; font-size:15px; }
+  .field input:focus, .field textarea:focus { outline:none; border-color:#6c63ff; }
+  .field textarea { width:100%; padding:14px; border:1px solid #ddd; border-radius:6px; font-size:15px; line-height:1.6; resize:vertical; min-height:200px; font-family:Georgia, 'Times New Roman', serif; }
+
+  /* AI Bar */
+  .ai-bar { background:#f8f9fb; border:1px solid #e2e6ee; border-radius:12px; padding:20px; margin-bottom:24px; }
+  .ai-bar-header { display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+  .ai-bar-header .icon { width:28px; height:28px; background:linear-gradient(135deg, #6c63ff, #a855f7); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; }
+  .ai-bar-header h3 { font-size:14px; font-weight:600; color:#333; }
+  .ai-bar-header .badge { font-size:10px; background:#e8e6ff; color:#6c63ff; padding:2px 8px; border-radius:10px; font-weight:600; }
+
+  /* 3D Avatar SVG styles */
+  .avatar-3d { width:56px; height:56px; border-radius:50%; overflow:hidden; flex-shrink:0; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .avatar-3d svg { width:100%; height:100%; }
+
+  /* Persona cards */
+  .persona-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-bottom:16px; }
+  .persona-card { border:2px solid #e2e6ee; border-radius:12px; padding:16px; cursor:pointer; transition:all 0.2s; background:#fff; display:flex; gap:14px; align-items:flex-start; }
+  .persona-card:hover { border-color:#b0b0e0; box-shadow:0 4px 12px rgba(108,99,255,0.08); transform:translateY(-1px); }
+  .persona-card.selected { border-color:#6c63ff; background:#faf9ff; box-shadow:0 0 0 3px rgba(108,99,255,0.12); }
+  .persona-info { flex:1; min-width:0; }
+  .persona-name { font-size:15px; font-weight:700; color:#1a1a2e; margin-bottom:3px; }
+  .persona-specialty { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px; display:inline-block; padding:2px 8px; border-radius:4px; }
+  .persona-desc { font-size:11.5px; color:#666; line-height:1.5; }
+
+  .persona-lucy .persona-specialty { color:#dc2626; background:#fef2f2; }
+  .persona-charles .persona-specialty { color:#2563eb; background:#eff6ff; }
+  .persona-elena .persona-specialty { color:#d97706; background:#fffbeb; }
+
+  .selected-persona-info { display:none; background:#faf9ff; border:1px solid #e2e6ee; border-radius:8px; padding:12px 16px; margin-bottom:14px; font-size:12px; color:#555; line-height:1.6; }
+  .selected-persona-info.visible { display:flex; align-items:center; gap:10px; }
+  .selected-persona-info strong { color:#333; }
+  .selected-persona-info .mini-avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; flex-shrink:0; }
+  .selected-persona-info .mini-avatar svg { width:100%; height:100%; }
+
+  .ai-actions { display:flex; gap:10px; align-items:center; }
+  .btn-ai { padding:10px 18px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+  .btn-ai:disabled { opacity:0.4; cursor:not-allowed; }
+  .btn-generate { background:#6c63ff; color:#fff; }
+  .btn-generate:hover:not(:disabled) { background:#5a52d9; }
+  .btn-restyle { background:#fff; color:#6c63ff; border:1px solid #6c63ff; }
+  .btn-restyle:hover:not(:disabled) { background:#f0eeff; }
+
+  .ai-warning { background:#fffbeb; border:1px solid #fcd34d; border-radius:10px; padding:16px 20px; margin-bottom:24px; display:none; }
+  .ai-warning p { font-size:13px; color:#92400e; line-height:1.5; }
+  .ai-warning a { color:#6c63ff; font-weight:500; }
+
+  .ai-loading { display:none; }
+  .ai-loading.active { display:block; }
+  .ai-loading-overlay { background:rgba(108,99,255,0.03); border:2px dashed rgba(108,99,255,0.3); border-radius:8px; padding:40px; text-align:center; min-height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; }
+  .loading-avatar { width:64px; height:64px; border-radius:50%; overflow:hidden; box-shadow:0 4px 16px rgba(108,99,255,0.2); animation:pulse 1.5s ease-in-out infinite; }
+  .loading-avatar svg { width:100%; height:100%; }
+  @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.06); } }
+  .ai-loading-text { font-size:14px; color:#6c63ff; font-weight:600; }
+  .ai-loading-sub { font-size:12px; color:#999; }
+
+  /* Persona editor mockup */
+  .editor-mockup { display:none; }
+  .editor-mockup.active { display:block; }
+  .avatar-upload { width:96px; height:96px; border-radius:50%; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; cursor:pointer; background:#fafafa; transition:border-color 0.15s; overflow:hidden; }
+  .avatar-upload:hover { border-color:#6c63ff; }
+  .avatar-upload.has-image { border:3px solid #6c63ff; }
+  .avatar-upload.has-image svg { width:100%; height:100%; }
+  .avatar-upload-text { font-size:11px; color:#999; text-align:center; line-height:1.4; }
+
+  .demo-tabs { position:fixed; bottom:0; left:0; right:0; background:#1a1a2e; padding:10px 24px; display:flex; gap:6px; justify-content:center; z-index:100; flex-wrap:wrap; }
+  .demo-tab { padding:7px 13px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; border:none; background:rgba(255,255,255,0.1); color:#b0b0c8; transition:all 0.15s; }
+  .demo-tab:hover { background:rgba(255,255,255,0.15); color:#fff; }
+  .demo-tab.active { background:#6c63ff; color:#fff; }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="sidebar">
+    <div class="sidebar-brand">TWILL CMS</div>
+    <div class="sidebar-section">
+      <div class="sidebar-item" id="navArticles" onclick="showState('normal')"><span class="sidebar-icon">📝</span> Articles</div>
+      <div class="sidebar-item" id="navPersonas" onclick="showState('persona-editor')"><span class="sidebar-icon">✍️</span> Writing Personas</div>
+      <div class="sidebar-item"><span class="sidebar-icon">🗄️</span> Media Library</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Settings</div>
+      <div class="sidebar-item"><span class="sidebar-icon">⚙️</span> Site Settings</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar" id="topbar">
+      <h1 id="pageTitle">Edit Article</h1>
+      <div class="topbar-actions" id="topbarActions">
+        <button class="btn">Save as draft</button>
+        <button class="btn btn-primary">Publish</button>
+      </div>
+    </div>
+
+    <!-- ARTICLE EDITOR VIEW -->
+    <div class="content" id="articleView">
+      <div class="field">
+        <label>Title</label>
+        <input type="text" id="title" value="City Council Approves $2.3B Transit Expansion Plan">
+      </div>
+
+      <div class="ai-bar" id="aiBar">
+        <div class="ai-bar-header">
+          <div class="icon">AI</div>
+          <h3>Writing Assistant</h3>
+          <span class="badge">Powered by Claude</span>
+        </div>
+
+        <div class="persona-grid" id="personaGrid">
+          <!-- Lucy -->
+          <div class="persona-card persona-lucy" data-persona="lucy" onclick="selectPersona(this)">
+            <div class="avatar-3d" id="avatarLucy">
+              <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="lucyBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fce4ec"/><stop offset="100%" stop-color="#f8bbd0"/></linearGradient>
+                  <linearGradient id="lucySkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffe0bd"/><stop offset="100%" stop-color="#f5c9a0"/></linearGradient>
+                  <linearGradient id="lucyHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5c3317"/><stop offset="100%" stop-color="#3e1f0d"/></linearGradient>
+                </defs>
+                <rect width="120" height="120" fill="url(#lucyBg)"/>
+                <!-- Body -->
+                <ellipse cx="60" cy="115" rx="35" ry="22" fill="#e74c70"/>
+                <!-- Neck -->
+                <rect x="52" y="72" width="16" height="12" rx="4" fill="url(#lucySkin)"/>
+                <!-- Head -->
+                <ellipse cx="60" cy="52" rx="26" ry="28" fill="url(#lucySkin)"/>
+                <!-- Hair back -->
+                <ellipse cx="60" cy="38" rx="30" ry="24" fill="url(#lucyHair)"/>
+                <!-- Hair bangs -->
+                <path d="M32 42 Q38 22 60 24 Q82 22 88 42 Q84 30 60 28 Q36 30 32 42Z" fill="url(#lucyHair)"/>
+                <!-- Hair sides -->
+                <ellipse cx="34" cy="55" rx="8" ry="18" fill="url(#lucyHair)"/>
+                <ellipse cx="86" cy="55" rx="8" ry="18" fill="url(#lucyHair)"/>
+                <!-- Eyes -->
+                <ellipse cx="48" cy="52" rx="4.5" ry="5" fill="#fff"/>
+                <ellipse cx="72" cy="52" rx="4.5" ry="5" fill="#fff"/>
+                <ellipse cx="49" cy="52.5" rx="2.5" ry="3" fill="#4a2810"/>
+                <ellipse cx="73" cy="52.5" rx="2.5" ry="3" fill="#4a2810"/>
+                <circle cx="49.5" cy="51" r="1" fill="#fff"/>
+                <circle cx="73.5" cy="51" r="1" fill="#fff"/>
+                <!-- Eyebrows -->
+                <path d="M42 45 Q48 41 54 44" stroke="#5c3317" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path d="M66 44 Q72 41 78 45" stroke="#5c3317" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <!-- Nose -->
+                <path d="M58 56 Q60 60 62 56" stroke="#deb08a" stroke-width="1.2" fill="none"/>
+                <!-- Smile -->
+                <path d="M50 63 Q60 72 70 63" stroke="#c96a5a" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <!-- Glasses -->
+                <rect x="39" y="47" width="16" height="12" rx="6" stroke="#b8860b" stroke-width="1.8" fill="none"/>
+                <rect x="63" y="47" width="16" height="12" rx="6" stroke="#b8860b" stroke-width="1.8" fill="none"/>
+                <line x1="55" y1="52" x2="63" y2="52" stroke="#b8860b" stroke-width="1.5"/>
+                <!-- Blush -->
+                <ellipse cx="42" cy="60" rx="5" ry="3" fill="#ffb3b3" opacity="0.4"/>
+                <ellipse cx="78" cy="60" rx="5" ry="3" fill="#ffb3b3" opacity="0.4"/>
+              </svg>
+            </div>
+            <div class="persona-info">
+              <div class="persona-name">Lucy</div>
+              <div class="persona-specialty">Long-form</div>
+              <div class="persona-desc">Warm, curious narratives with vivid scene-setting and literary detail.</div>
+            </div>
+          </div>
+
+          <!-- Charles -->
+          <div class="persona-card persona-charles" data-persona="charles" onclick="selectPersona(this)">
+            <div class="avatar-3d" id="avatarCharles">
+              <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="charlesBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e3f2fd"/><stop offset="100%" stop-color="#bbdefb"/></linearGradient>
+                  <linearGradient id="charlesSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffe0bd"/><stop offset="100%" stop-color="#e8c49a"/></linearGradient>
+                  <linearGradient id="charlesHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#888"/><stop offset="100%" stop-color="#666"/></linearGradient>
+                </defs>
+                <rect width="120" height="120" fill="url(#charlesBg)"/>
+                <!-- Body/suit -->
+                <ellipse cx="60" cy="115" rx="35" ry="22" fill="#2c3e50"/>
+                <!-- Shirt collar -->
+                <path d="M48 88 L52 96 L60 90 L68 96 L72 88" fill="#fff" stroke="#ddd" stroke-width="0.5"/>
+                <!-- Tie -->
+                <polygon points="58,92 62,92 61,108 59,108" fill="#c0392b"/>
+                <polygon points="57,91 63,91 62,93 58,93" fill="#e74c3c"/>
+                <!-- Neck -->
+                <rect x="52" y="72" width="16" height="14" rx="4" fill="url(#charlesSkin)"/>
+                <!-- Head -->
+                <ellipse cx="60" cy="50" rx="25" ry="27" fill="url(#charlesSkin)"/>
+                <!-- Hair -->
+                <path d="M35 42 Q38 22 60 20 Q82 22 85 42 Q82 28 60 26 Q38 28 35 42Z" fill="url(#charlesHair)"/>
+                <path d="M35 42 Q34 36 38 32" stroke="url(#charlesHair)" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <path d="M85 42 Q86 36 82 32" stroke="url(#charlesHair)" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <!-- Eyes -->
+                <ellipse cx="48" cy="50" rx="4" ry="4.5" fill="#fff"/>
+                <ellipse cx="72" cy="50" rx="4" ry="4.5" fill="#fff"/>
+                <ellipse cx="49" cy="50.5" rx="2.2" ry="2.8" fill="#2c3e50"/>
+                <ellipse cx="73" cy="50.5" rx="2.2" ry="2.8" fill="#2c3e50"/>
+                <circle cx="49.5" cy="49.5" r="0.8" fill="#fff"/>
+                <circle cx="73.5" cy="49.5" r="0.8" fill="#fff"/>
+                <!-- Eyebrows - serious -->
+                <line x1="42" y1="43" x2="55" y2="43" stroke="#666" stroke-width="2.2" stroke-linecap="round"/>
+                <line x1="65" y1="43" x2="78" y2="43" stroke="#666" stroke-width="2.2" stroke-linecap="round"/>
+                <!-- Nose -->
+                <path d="M57 54 Q60 59 63 54" stroke="#d4a574" stroke-width="1.5" fill="none"/>
+                <!-- Mouth - neutral/serious -->
+                <path d="M52 63 Q60 66 68 63" stroke="#b07660" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <!-- Jawline shadow -->
+                <path d="M38 58 Q40 72 60 76 Q80 72 82 58" stroke="#d4a574" stroke-width="0.5" fill="none" opacity="0.3"/>
+              </svg>
+            </div>
+            <div class="persona-info">
+              <div class="persona-name">Charles</div>
+              <div class="persona-specialty">News</div>
+              <div class="persona-desc">Veteran reporter. Objective, concise AP-style. Leads with the fact, zero filler.</div>
+            </div>
+          </div>
+
+          <!-- Elena -->
+          <div class="persona-card persona-elena" data-persona="elena" onclick="selectPersona(this)">
+            <div class="avatar-3d" id="avatarElena">
+              <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="elenaBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fff8e1"/><stop offset="100%" stop-color="#ffecb3"/></linearGradient>
+                  <linearGradient id="elenaSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8d5524"/><stop offset="100%" stop-color="#6d3a1a"/></linearGradient>
+                  <linearGradient id="elenaHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a1a1a"/><stop offset="100%" stop-color="#0d0d0d"/></linearGradient>
+                </defs>
+                <rect width="120" height="120" fill="url(#elenaBg)"/>
+                <!-- Body -->
+                <ellipse cx="60" cy="115" rx="35" ry="22" fill="#f39c12"/>
+                <!-- Necklace -->
+                <path d="M44 88 Q60 98 76 88" stroke="#ffd700" stroke-width="2" fill="none"/>
+                <circle cx="60" cy="96" r="3" fill="#ffd700"/>
+                <!-- Neck -->
+                <rect x="52" y="70" width="16" height="14" rx="4" fill="url(#elenaSkin)"/>
+                <!-- Head -->
+                <ellipse cx="60" cy="50" rx="25" ry="27" fill="url(#elenaSkin)"/>
+                <!-- Hair -->
+                <ellipse cx="60" cy="36" rx="30" ry="22" fill="url(#elenaHair)"/>
+                <!-- Curly hair details -->
+                <circle cx="32" cy="46" r="10" fill="url(#elenaHair)"/>
+                <circle cx="88" cy="46" r="10" fill="url(#elenaHair)"/>
+                <circle cx="30" cy="58" r="8" fill="url(#elenaHair)"/>
+                <circle cx="90" cy="58" r="8" fill="url(#elenaHair)"/>
+                <circle cx="34" cy="68" r="6" fill="url(#elenaHair)"/>
+                <circle cx="86" cy="68" r="6" fill="url(#elenaHair)"/>
+                <!-- Hair top volume -->
+                <ellipse cx="42" cy="30" rx="10" ry="8" fill="url(#elenaHair)"/>
+                <ellipse cx="78" cy="30" rx="10" ry="8" fill="url(#elenaHair)"/>
+                <!-- Eyes -->
+                <ellipse cx="48" cy="50" rx="4.5" ry="5" fill="#fff"/>
+                <ellipse cx="72" cy="50" rx="4.5" ry="5" fill="#fff"/>
+                <ellipse cx="49" cy="50.5" rx="2.5" ry="3" fill="#3e1f0d"/>
+                <ellipse cx="73" cy="50.5" rx="2.5" ry="3" fill="#3e1f0d"/>
+                <circle cx="50" cy="49.5" r="1" fill="#fff"/>
+                <circle cx="74" cy="49.5" r="1" fill="#fff"/>
+                <!-- Eyelashes -->
+                <path d="M43 46 L41 43" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M46 45 L45 42" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M77 46 L79 43" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M74 45 L75 42" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/>
+                <!-- Eyebrows - expressive/arched -->
+                <path d="M42 43 Q48 38 55 42" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <path d="M65 42 Q72 38 78 43" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <!-- Nose -->
+                <path d="M57 55 Q60 59 63 55" stroke="#6d3a1a" stroke-width="1.2" fill="none"/>
+                <!-- Confident smirk -->
+                <path d="M49 63 Q56 70 64 66 Q68 64 72 63" stroke="#8b4040" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <!-- Earrings -->
+                <circle cx="34" cy="56" r="3" fill="#ffd700"/>
+                <circle cx="86" cy="56" r="3" fill="#ffd700"/>
+              </svg>
+            </div>
+            <div class="persona-info">
+              <div class="persona-name">Elena</div>
+              <div class="persona-specialty">Opinion</div>
+              <div class="persona-desc">Bold first-person columnist. Strong takes, rhetorical flair, never sits on the fence.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="selected-persona-info" id="personaInfo"></div>
+
+        <div class="ai-actions">
+          <button class="btn-ai btn-generate" id="btnGenerate" disabled onclick="showState('generating')">✨ Generate from Title</button>
+          <button class="btn-ai btn-restyle" id="btnRestyle" disabled onclick="showState('restyling')">🔄 Restyle Draft</button>
+        </div>
+      </div>
+
+      <div class="ai-warning" id="aiWarning">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <span style="font-size:16px;">⚠️</span>
+          <div>
+            <p><strong>Claude API key not configured.</strong></p>
+            <p style="margin-top:4px;">AI writing features require a Claude API key. <a href="#">Configure in Site Settings →</a></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-loading" id="aiLoading">
+        <div class="ai-loading-overlay">
+          <div class="loading-avatar" id="loadingAvatar"></div>
+          <div class="ai-loading-text" id="loadingText">Lucy is writing your article...</div>
+          <div class="ai-loading-sub" id="loadingSub">Crafting a long-form narrative from the title</div>
+        </div>
+      </div>
+
+      <div class="field" id="bodyField">
+        <label>Body</label>
+        <textarea id="body">The city council voted 7-2 Tuesday evening to approve a sweeping $2.3 billion transit expansion that promises to reshape commuter routes across the metropolitan area.
+
+The plan, championed by Mayor Elena Rodriguez, includes three new light-rail lines, 45 additional bus routes, and a downtown transit hub expected to serve 180,000 daily riders by 2030.</textarea>
+      </div>
+
+      <div class="field">
+        <label>Hero Image</label>
+        <div style="border:2px dashed #ddd;border-radius:8px;padding:40px;text-align:center;color:#999;font-size:13px;">
+          Drop an image here or click to upload
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONA EDITOR VIEW -->
+    <div class="content editor-mockup" id="personaEditorView">
+      <div style="display:flex;gap:32px;align-items:flex-start;">
+        <div>
+          <div class="field" style="margin-bottom:16px;">
+            <label>Avatar</label>
+            <div class="avatar-upload has-image" id="editorAvatar"></div>
+            <p style="font-size:11px;color:#999;margin-top:8px;">Click to upload via Media Library</p>
+          </div>
+        </div>
+        <div style="flex:1;">
+          <div class="field">
+            <label>Name</label>
+            <input type="text" value="Lucy" style="max-width:300px;">
+          </div>
+          <div class="field">
+            <label>Specialty</label>
+            <input type="text" value="Long-form" style="max-width:300px;">
+            <p style="font-size:11px;color:#999;margin-top:4px;">e.g. News, Long-form, Opinion, Interview, Review</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Voice Description</label>
+        <textarea style="font-family:-apple-system,sans-serif;min-height:160px;">Write warm, curious, narrative-driven pieces. Craft immersive stories with vivid scene-setting, meaningful quotes, and a literary sensibility. Favor human-interest angles. Use rich but accessible language — never academic. Open with a scene, not a summary. Build tension through structure. Close with resonance, not a recap.
+
+Your reader is an intelligent generalist who reads for pleasure and insight. They want to feel like they were there.</textarea>
+      </div>
+
+      <div style="background:#f8f9fb;border:1px solid #e2e6ee;border-radius:8px;padding:16px;margin-top:8px;">
+        <div style="font-size:12px;font-weight:600;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Preview</div>
+        <div style="display:flex;gap:14px;align-items:center;">
+          <div style="width:48px;height:48px;border-radius:50%;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);" id="previewAvatar"></div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#1a1a2e;">Lucy</div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#dc2626;background:#fef2f2;display:inline-block;padding:2px 8px;border-radius:4px;margin-top:2px;">Long-form</div>
+          </div>
+        </div>
+        <p style="font-size:12px;color:#666;margin-top:10px;line-height:1.5;">This is how the persona card will appear in the article editor.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="demo-tabs">
+  <button class="demo-tab active" onclick="showState('normal')">Article Editor</button>
+  <button class="demo-tab" onclick="showState('selected')">Persona Selected</button>
+  <button class="demo-tab" onclick="showState('generating')">Generating...</button>
+  <button class="demo-tab" onclick="showState('done-lucy')">Result: Lucy</button>
+  <button class="demo-tab" onclick="showState('done-charles')">Result: Charles</button>
+  <button class="demo-tab" onclick="showState('done-elena')">Result: Elena</button>
+  <button class="demo-tab" onclick="showState('no-key')">No API Key</button>
+  <button class="demo-tab" onclick="showState('persona-editor')">Persona Editor</button>
+</div>
+
+<script>
+let selectedPersona = null;
+
+const personas = {
+  lucy: { name:'Lucy', specialty:'Long-form', loadingText:'Lucy is writing your article...', loadingSub:'Crafting a long-form narrative from the title' },
+  charles: { name:'Charles', specialty:'News', loadingText:'Charles is writing your article...', loadingSub:'Drafting concise AP-style news copy' },
+  elena: { name:'Elena', specialty:'Opinion', loadingText:'Elena is writing your article...', loadingSub:'Composing a bold opinion column' }
+};
+
+function getAvatarSVG(persona) {
+  return document.getElementById('avatar' + persona.charAt(0).toUpperCase() + persona.slice(1)).innerHTML;
+}
+
+function selectPersona(el) {
+  document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPersona = el.dataset.persona;
+
+  document.getElementById('btnGenerate').disabled = false;
+  document.getElementById('btnRestyle').disabled = false;
+
+  const p = personas[selectedPersona];
+  const info = document.getElementById('personaInfo');
+  const miniSvg = getAvatarSVG(selectedPersona);
+  info.innerHTML = '<div class="mini-avatar"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">' + miniSvg + '</svg></div><div><strong>' + p.name + '</strong> will ' + (selectedPersona === 'lucy' ? 'craft an immersive narrative with vivid detail.' : selectedPersona === 'charles' ? 'write tight, objective news copy.' : 'write a bold opinion piece with a strong point of view.') + '</div>';
+  info.classList.add('visible');
+}
+
+function showState(state) {
+  document.getElementById('aiBar').style.display = 'block';
+  document.getElementById('aiWarning').style.display = 'none';
+  document.getElementById('aiLoading').style.display = 'none';
+  document.getElementById('aiLoading').classList.remove('active');
+  document.getElementById('bodyField').style.display = 'block';
+  document.getElementById('articleView').style.display = 'block';
+  document.getElementById('personaEditorView').classList.remove('active');
+  document.getElementById('pageTitle').textContent = 'Edit Article';
+  document.getElementById('topbarActions').innerHTML = '<button class="btn">Save as draft</button><button class="btn btn-primary">Publish</button>';
+  document.getElementById('navArticles').classList.add('active');
+  document.getElementById('navPersonas').classList.remove('active');
+
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  if(event && event.target) event.target.classList.add('active');
+
+  const body = document.getElementById('body');
+  body.style.borderColor = '#ddd';
+  body.style.background = '#fff';
+
+  if (state === 'normal') {
+    document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('btnGenerate').disabled = true;
+    document.getElementById('btnRestyle').disabled = true;
+    document.getElementById('personaInfo').classList.remove('visible');
+    selectedPersona = null;
+    body.value = "The city council voted 7-2 Tuesday evening to approve a sweeping $2.3 billion transit expansion that promises to reshape commuter routes across the metropolitan area.\n\nThe plan, championed by Mayor Elena Rodriguez, includes three new light-rail lines, 45 additional bus routes, and a downtown transit hub expected to serve 180,000 daily riders by 2030.";
+  }
+  else if (state === 'selected') {
+    selectPersona(document.querySelector('[data-persona="lucy"]'));
+  }
+  else if (state === 'no-key') {
+    document.getElementById('aiBar').style.display = 'none';
+    document.getElementById('aiWarning').style.display = 'block';
+  }
+  else if (state === 'generating' || state === 'restyling') {
+    if(!selectedPersona) selectPersona(document.querySelector('[data-persona="lucy"]'));
+    const p = personas[selectedPersona];
+    document.getElementById('aiLoading').style.display = 'block';
+    document.getElementById('aiLoading').classList.add('active');
+    document.getElementById('bodyField').style.display = 'none';
+    const avatarHtml = getAvatarSVG(selectedPersona);
+    document.getElementById('loadingAvatar').innerHTML = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">' + avatarHtml + '</svg>';
+    document.getElementById('loadingText').textContent = p.loadingText;
+    document.getElementById('loadingSub').textContent = p.loadingSub;
+  }
+  else if (state === 'done-lucy') {
+    selectPersona(document.querySelector('[data-persona="lucy"]'));
+    body.value = "The fluorescent lights of City Hall had never felt quite so charged.\n\nAt 9:47 on a humid Tuesday evening, seven hands rose in the packed council chamber — and with them, the trajectory of a city. The $2.3 billion transit expansion plan had cleared its final political hurdle.\n\nMayor Elena Rodriguez stood at the podium, her voice steady but her hands gripping the edges. \"This is the most significant infrastructure investment in our city's history,\" she said. Then, more quietly: \"We're building the transit system our grandchildren will ride.\"\n\nThe plan is staggering in scope. Three new light-rail lines will thread through neighborhoods that haven't seen public transit investment in decades. And at the center of it all: a downtown hub designed to handle 180,000 daily riders by 2030.\n\nBut not everyone in the chamber shared Rodriguez's optimism. \"Six years of construction,\" Torres said flatly. \"Six years of detours, noise, and displaced small businesses.\"\n\nOutside, a hand-painted sign bobbed above the crowd: TRAINS NOT LANES.";
+    body.style.borderColor = '#6c63ff'; body.style.background = '#faf9ff';
+    setTimeout(() => { body.style.borderColor = '#ddd'; body.style.background = '#fff'; }, 2500);
+  }
+  else if (state === 'done-charles') {
+    selectPersona(document.querySelector('[data-persona="charles"]'));
+    body.value = "The City Council approved a $2.3 billion transit expansion plan in a 7-2 vote Tuesday.\n\nThe measure authorizes three light-rail lines, 45 new bus routes, and a central transit hub projected to serve 180,000 daily riders by 2030.\n\nMayor Elena Rodriguez called it \"the most significant infrastructure investment in our city's history.\"\n\nCouncil members Torres, Park, and Liu opposed the measure, citing cost overrun concerns and neighborhood disruption during the six-year construction timeline.\n\nConstruction on the first corridor is scheduled to begin in early 2027.";
+    body.style.borderColor = '#6c63ff'; body.style.background = '#faf9ff';
+    setTimeout(() => { body.style.borderColor = '#ddd'; body.style.background = '#fff'; }, 2500);
+  }
+  else if (state === 'done-elena') {
+    selectPersona(document.querySelector('[data-persona="elena"]'));
+    body.value = "Let me be blunt: if you voted against this transit plan, you voted against the future.\n\nTuesday night, the City Council did something rare — something almost unheard of in an era of political paralysis. They said yes. Yes to $2.3 billion in transit expansion. Yes to three new light-rail lines. Yes to the radical notion that a city of 1.2 million people shouldn't be held hostage by four-lane roads built for a population half that size.\n\nSeven council members understood this. Two didn't.\n\nCouncil member Torres worried about \"six years of construction.\" Six years. You know what else takes about six years? Sitting in bumper-to-bumper traffic on the 405 while your kids grow up in the back seat.\n\nMayor Rodriguez nailed it at the podium: we're building what our grandchildren will ride. But here's what she didn't say — we should have built it twenty years ago.\n\nThe question was never whether we could afford this plan. It was whether we could afford not to.";
+    body.style.borderColor = '#6c63ff'; body.style.background = '#faf9ff';
+    setTimeout(() => { body.style.borderColor = '#ddd'; body.style.background = '#fff'; }, 2500);
+  }
+  else if (state === 'persona-editor') {
+    document.getElementById('articleView').style.display = 'none';
+    document.getElementById('personaEditorView').classList.add('active');
+    document.getElementById('pageTitle').textContent = 'Edit Persona: Lucy';
+    document.getElementById('topbarActions').innerHTML = '<button class="btn">Cancel</button><button class="btn btn-primary">Save</button>';
+    document.getElementById('navArticles').classList.remove('active');
+    document.getElementById('navPersonas').classList.add('active');
+
+    const svgContent = getAvatarSVG('lucy');
+    document.getElementById('editorAvatar').innerHTML = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">' + svgContent + '</svg>';
+    document.getElementById('previewAvatar').innerHTML = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">' + svgContent + '</svg>';
+  }
+}
+</script>
+
+</body>
+</html>
