@@ -49,7 +49,9 @@
     section.hero .hero-bg {
       position: relative !important;
       inset: auto !important;
-      width: 100% !important;
+      /* Inset from the viewport edges — matches text content gutters */
+      width: calc(100% - 2 * var(--gutter)) !important;
+      margin: 12px var(--gutter) 0 !important;
       aspect-ratio: 3/2;
       height: auto !important;
       max-height: none !important;
