@@ -11,7 +11,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // ph_reads is a plain integer counter — no need to encrypt it.
+        $middleware->encryptCookies(except: ['ph_reads']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
