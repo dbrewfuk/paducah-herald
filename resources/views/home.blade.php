@@ -4,11 +4,8 @@
 
 @section('styles')
 <style>
-  /* Override hero image opacity — Economist dims to 0.5 for their palette;
-     news photos need to be more visible */
+  /* Desktop hero tweaks — news photos need more visibility than Economist's 0.5 */
   .hero-main .hero-bg { opacity: 0.82; }
-
-  /* Herald uses navy for section labels, not red */
   .hero-main .hero-flytitle { color: rgba(255,255,255,0.7); }
 
   .home-section { padding: 40px 0; }
@@ -23,8 +20,91 @@
   @media (max-width: 900px) {
     .home-section { padding: 28px 0; }
   }
+
+  /* ── Mobile hero: compact cover card ──────────────────────────────────
+     These rules live HERE (inline, loads last) so they beat economist.css
+     regardless of cascade order. Uses section.hero specificity bump.    */
   @media (max-width: 540px) {
     .home-section { padding: 20px 0; }
+
+    section.hero { background: #fff; border-bottom: 1px solid var(--paris-85); }
+    section.hero .hero-inner { display: block; }
+
+    section.hero .hero-main {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 110px;
+      column-gap: 14px;
+      align-items: start;
+      padding: 16px var(--gutter) 20px;
+      overflow: visible;
+      background: #fff;
+    }
+    section.hero .hero-bg {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      height: 78px;
+      object-fit: cover;
+      opacity: 1;
+      grid-column: 2;
+      grid-row: 1;
+    }
+    section.hero .hero-gradient { display: none; }
+    section.hero .hero-content {
+      position: static;
+      padding: 0;
+      grid-column: 1;
+      grid-row: 1;
+    }
+    section.hero .hero-flytitle { color: var(--red); margin-bottom: 5px; }
+    section.hero .hero-headline {
+      font-size: 19px;
+      color: var(--ink-5);
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+    section.hero .hero-desc {
+      display: block;
+      font-size: 13px;
+      color: var(--ink-35);
+      font-family: var(--serif);
+      -webkit-line-clamp: 2;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Sidebar as stacked compact rows */
+    section.hero .hero-sidebar {
+      display: block;
+      overflow: visible;
+      background: #fff;
+      padding: 0 var(--gutter);
+      border-top: none;
+    }
+    section.hero .hero-sidebar-item {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      align-items: flex-start;
+      min-width: 0;
+      border-top: 1px solid var(--paris-85);
+      border-right: none;
+      padding: 13px 0;
+    }
+    section.hero .hero-sidebar-text { flex: 1 1 0; min-width: 0; }
+    section.hero .hero-sidebar-img {
+      order: 2;
+      flex: 0 0 72px;
+      width: 72px;
+      height: 54px;
+      object-fit: cover;
+      aspect-ratio: unset;
+      margin-bottom: 0;
+    }
+    section.hero .hero-sidebar-label { color: var(--red); }
+    section.hero .hero-sidebar-headline { font-size: 14px; color: var(--ink-5); }
   }
 </style>
 @endsection
