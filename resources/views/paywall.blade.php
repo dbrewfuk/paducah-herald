@@ -86,6 +86,7 @@
     /* ── Meter ────────────────────────────────────────────── */
     .pw-meter {
       display: flex;
+      align-items: center;
       justify-content: center;
       gap: 8px;
       margin-bottom: 32px;
@@ -93,6 +94,7 @@
     .pw-dot {
       width: 10px;
       height: 10px;
+      flex: 0 0 10px;
       border-radius: 50%;
       background: #1a4a7a;
     }
