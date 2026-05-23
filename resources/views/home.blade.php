@@ -22,7 +22,7 @@
     .hero-desc { font-size: 14px; }
   }
   @media (max-width: 540px) {
-    .hero-main-link .hero-bg { aspect-ratio: 4/3; }
+    .home-hero-img { aspect-ratio: 4/3; }
     .hero-content { padding: 20px 16px; }
     .hero-headline { font-size: 22px; }
     .hero-desc { display: none; }
@@ -30,8 +30,9 @@
     .hero-sidebar-headline { font-size: 15px; }
   }
   .hero-main-link { display: block; position: relative; }
-  .hero-bg {
+  .home-hero-img {
     width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;
+    position: relative; height: auto; opacity: 1;
   }
   .hero-gradient {
     position: absolute; inset: 0;
@@ -90,11 +91,11 @@
   <div class="home-hero-inner">
     <a class="hero-main-link" href="{{ route('articles.show', $featured->slug) }}">
       @if($featured->imageObject('hero'))
-        <img class="hero-bg" src="{{ $featured->image('hero', 'default') }}" alt="{{ $featured->title }}" />
+        <img class="home-hero-img" src="{{ $featured->image('hero', 'default') }}" alt="{{ $featured->title }}" />
       @elseif($featured->hero_image_url)
-        <img class="hero-bg" src="{{ $featured->hero_image_url }}" alt="{{ $featured->title }}" />
+        <img class="home-hero-img" src="{{ $featured->hero_image_url }}" alt="{{ $featured->title }}" />
       @else
-        <div class="hero-bg" style="background:var(--ink-20)"></div>
+        <div class="home-hero-img" style="background:var(--ink-20)"></div>
       @endif
       <div class="hero-gradient"></div>
       <div class="hero-content">
