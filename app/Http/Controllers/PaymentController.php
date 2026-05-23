@@ -15,6 +15,7 @@ class PaymentController extends Controller
     public function checkout(Request $request)
     {
         Stripe::setApiKey(config('services.stripe.secret'));
+        Stripe::setApiVersion('2024-06-20');
 
         $intended = session('paywall_intended', route('home'));
         $successUrl = route('payment.success') . '?session_id={CHECKOUT_SESSION_ID}&intended=' . urlencode($intended);
@@ -51,6 +52,7 @@ class PaymentController extends Controller
         }
 
         Stripe::setApiKey(config('services.stripe.secret'));
+        Stripe::setApiVersion('2024-06-20');
 
         try {
             $session = StripeSession::retrieve($sessionId);
