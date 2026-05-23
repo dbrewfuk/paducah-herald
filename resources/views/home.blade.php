@@ -65,14 +65,15 @@
       line-height: 1.2;
     }
     section.hero .hero-desc {
-      display: block;
+      /* Need !important to beat economist.css's "display:block !important"
+         which would otherwise break -webkit-line-clamp */
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
       font-size: 13px;
       color: var(--ink-35);
       font-family: var(--serif);
-      -webkit-line-clamp: 2;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
     }
 
     /* Sidebar as stacked compact rows */
