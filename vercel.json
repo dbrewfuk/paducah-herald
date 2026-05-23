@@ -12,6 +12,7 @@
     { "src": "/build/(.*)",  "dest": "/public/build/$1"  },
     { "src": "/fonts/(.*)",  "dest": "/public/fonts/$1"  },
     { "src": "/images/(.*)", "dest": "/public/images/$1" },
+    { "src": "/economist.css", "dest": "/public/economist.css" },
     { "src": "/favicon.ico", "dest": "/public/favicon.ico" },
     { "src": "/(.*)",        "dest": "/api/index.php"     }
   ]

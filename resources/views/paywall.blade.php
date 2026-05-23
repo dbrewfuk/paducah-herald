@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="{{ asset('css/economist-cfb5b9.css') }}" />
   <link rel="stylesheet" href="{{ asset('css/economist-da5457.css') }}" />
   <link rel="stylesheet" href="{{ asset('economist.css') }}" />
+  <link rel="stylesheet" href="{{ asset('css/site.css') }}" />
   <style>
     :root {
       --red: #1a4a7a;
