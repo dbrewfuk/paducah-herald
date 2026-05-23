@@ -108,8 +108,8 @@
       <div class="footer-col">
         <h4 class="footer-col-head">The Herald</h4>
         <a href="{{ route('about') }}">About us</a>
-        <a href="{{ route('about') }}#contact">Contact the newsroom</a>
-        <a href="#">Subscribe</a>
+        <a href="{{ route('about') }}">Contact the newsroom</a>
+        <a href="{{ route('payment.checkout') }}">Subscribe</a>
         <a href="{{ route('weekly-edition.index') }}">E-Edition</a>
       </div>
       <div class="footer-col">
@@ -120,10 +120,10 @@
       </div>
       <div class="footer-col">
         <h4 class="footer-col-head">Contact</h4>
-        <a href="#">Tips & story ideas</a>
-        <a href="#">Advertise</a>
-        <a href="#">Letters to the editor</a>
-        <a href="#">Obituaries</a>
+        <a href="mailto:tips@paducahherald.com">Tips &amp; story ideas</a>
+        <a href="{{ route('advertise') }}">Advertise</a>
+        <a href="mailto:letters@paducahherald.com">Letters to the editor</a>
+        <a href="{{ route('sections.show', 'obituaries') }}">Obituaries</a>
       </div>
       <div class="footer-col">
         <h4 class="footer-col-head">More</h4>
@@ -136,10 +136,10 @@
     </div>
     <div class="footer-bottom">
       <div class="footer-legal">
-        <a href="#">Terms of use</a>
-        <a href="#">Privacy</a>
-        <a href="#">Accessibility</a>
-        <a href="#">Sitemap</a>
+        <a href="{{ route('terms') }}">Terms of use</a>
+        <a href="{{ route('privacy') }}">Privacy</a>
+        <a href="{{ route('advertise') }}">Advertise</a>
+        <a href="{{ route('about') }}">Contact</a>
       </div>
       <p class="footer-copyright">© The Paducah Herald {{ date('Y') }}</p>
     </div>

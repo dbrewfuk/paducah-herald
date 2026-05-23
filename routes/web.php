@@ -31,4 +31,7 @@ Route::get('/world-in-brief', [WorldInBriefController::class, 'index'])->name('w
 Route::get('/insider', [InsiderEpisodeController::class, 'index'])->name('insider.index');
 Route::get('/insider/{slug}', [InsiderEpisodeController::class, 'show'])->name('insider.show');
 
-Route::get('/about', fn() => view('site.about'))->name('about');
+Route::get('/about',     fn() => view('site.about'))->name('about');
+Route::get('/privacy',   fn() => view('site.privacy'))->name('privacy');
+Route::get('/terms',     fn() => view('site.terms'))->name('terms');
+Route::get('/advertise', fn() => view('site.advertise'))->name('advertise');
