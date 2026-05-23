@@ -21,91 +21,125 @@
     .home-section { padding: 28px 0; }
   }
 
-  /* ── Mobile hero: compact cover card ──────────────────────────────────
-     These rules live HERE (inline, loads last) so they beat economist.css
-     regardless of cascade order. Uses section.hero specificity bump.    */
+  /* ── Mobile hero: Economist stacked card layout ─────────────────────
+     Full-width image on top, section label + headline + standfirst below.
+     Each sidebar story gets the same treatment.
+     Uses section.hero prefix (specificity 0,2,1) + !important to beat
+     economist.css's own !important rules.                              */
   @media (max-width: 540px) {
     .home-section { padding: 20px 0; }
 
-    section.hero { background: #fff; border-bottom: 1px solid var(--paris-85); }
-    section.hero .hero-inner { display: block; }
+    /* Outer shell */
+    section.hero { background: #fff; border-bottom: none; }
+    section.hero .hero-inner {
+      display: flex !important;
+      flex-direction: column;
+    }
 
+    /* ── Main card ── */
     section.hero .hero-main {
-      min-height: 0;
-      display: grid;
-      grid-template-columns: 1fr 110px;
-      column-gap: 14px;
-      align-items: start;
-      padding: 16px var(--gutter) 20px;
+      min-height: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 0 !important;
       overflow: visible;
       background: #fff;
+      border-bottom: 1px solid var(--paris-85);
     }
     section.hero .hero-bg {
-      position: relative;
-      inset: auto;
-      width: 100%;
-      height: 78px;
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      aspect-ratio: 3/2;
+      height: auto !important;
+      max-height: none !important;
       object-fit: cover;
-      opacity: 1;
-      grid-column: 2;
-      grid-row: 1;
+      opacity: 1 !important;
+      order: 0;
+      grid-column: unset;
+      grid-row: unset;
+      flex-shrink: 0;
     }
-    section.hero .hero-gradient { display: none; }
+    section.hero .hero-gradient { display: none !important; }
     section.hero .hero-content {
-      position: static;
-      padding: 0;
-      grid-column: 1;
-      grid-row: 1;
+      position: static !important;
+      inset: auto !important;
+      padding: 14px var(--gutter) 22px !important;
+      background: #fff;
+      grid-column: unset;
+      grid-row: unset;
     }
-    section.hero .hero-flytitle { color: var(--red); margin-bottom: 5px; }
-    section.hero .hero-headline {
-      font-size: 19px;
-      color: var(--ink-5);
+    section.hero .hero-flytitle {
+      color: var(--red) !important;
       margin-bottom: 6px;
+    }
+    section.hero .hero-headline {
+      font-size: 22px !important;
+      color: var(--ink-5) !important;
+      margin-bottom: 8px;
       line-height: 1.2;
     }
     section.hero .hero-desc {
-      /* Need !important to beat economist.css's "display:block !important"
-         which would otherwise break -webkit-line-clamp */
       display: -webkit-box !important;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      font-size: 13px;
-      color: var(--ink-35);
+      font-size: 15px;
+      color: var(--ink-20);
       font-family: var(--serif);
+      line-height: 1.5;
+    }
+    section.hero .hero-read-time {
+      display: block;
+      margin-top: 10px;
+      font-size: 12px;
+      font-family: var(--sans);
+      color: var(--ink-35);
     }
 
-    /* Sidebar as stacked compact rows */
+    /* ── Sidebar cards: same stacked style ── */
     section.hero .hero-sidebar {
-      display: block;
+      display: flex !important;
+      flex-direction: column;
       overflow: visible;
       background: #fff;
-      padding: 0 var(--gutter);
+      padding: 0 !important;
       border-top: none;
     }
     section.hero .hero-sidebar-item {
-      display: flex;
-      flex-direction: row;
-      gap: 12px;
-      align-items: flex-start;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0 !important;
       min-width: 0;
       border-top: 1px solid var(--paris-85);
-      border-right: none;
-      padding: 13px 0;
+      border-right: none !important;
+      padding: 0 !important;
+      align-items: stretch;
     }
-    section.hero .hero-sidebar-text { flex: 1 1 0; min-width: 0; }
     section.hero .hero-sidebar-img {
-      order: 2;
-      flex: 0 0 72px;
-      width: 72px;
-      height: 54px;
+      order: -1;
+      width: 100% !important;
+      aspect-ratio: 3/2;
+      height: auto !important;
+      max-height: none !important;
       object-fit: cover;
-      aspect-ratio: unset;
-      margin-bottom: 0;
+      flex: none;
+      margin-bottom: 0 !important;
     }
-    section.hero .hero-sidebar-label { color: var(--red); }
-    section.hero .hero-sidebar-headline { font-size: 14px; color: var(--ink-5); }
+    section.hero .hero-sidebar-text {
+      flex: none;
+      padding: 12px var(--gutter) 18px;
+      min-width: 0;
+    }
+    section.hero .hero-sidebar-label {
+      color: var(--red) !important;
+      margin-bottom: 4px;
+    }
+    section.hero .hero-sidebar-headline {
+      font-size: 17px !important;
+      color: var(--ink-5) !important;
+      line-height: 1.25;
+    }
   }
 </style>
 @endsection
@@ -135,6 +169,9 @@
         <h1 class="hero-headline">{{ $featured->title }}</h1>
         @if($featured->standfirst)
           <p class="hero-desc">{{ $featured->standfirst }}</p>
+        @endif
+        @if($featured->read_time)
+          <span class="hero-read-time">{{ $featured->read_time }} min read</span>
         @endif
       </div>
     </a>
