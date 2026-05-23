@@ -16,6 +16,12 @@ yarn-error.log
 /.vscode
 /.fleet
 /.zed
+.DS_Store
+.agents
+.claude
+/article_*.html
+/storage/logs/*.log
+/storage/framework/views/*.php
 
 # Keep the SQLite database for Vercel deployment
 # database/database.sqlite is intentionally NOT ignored
