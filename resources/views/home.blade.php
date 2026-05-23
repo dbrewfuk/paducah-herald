@@ -13,6 +13,22 @@
     padding: 0 var(--gutter) 40px;
     display: grid; grid-template-columns: 1fr 320px; gap: 48px; align-items: start;
   }
+  @media (max-width: 900px) {
+    .home-hero-inner { grid-template-columns: 1fr; gap: 0; padding-bottom: 0; }
+    .hero-sidebar { display: flex; overflow-x: auto; scrollbar-width: none; gap: 0; padding: 0; background: var(--ink-10); }
+    .hero-sidebar::-webkit-scrollbar { display: none; }
+    .hero-sidebar-item { min-width: 220px; flex-shrink: 0; border-top: none; border-right: 1px solid rgba(255,255,255,0.1); padding: 16px; }
+    .hero-headline { font-size: 26px; }
+    .hero-desc { font-size: 14px; }
+  }
+  @media (max-width: 540px) {
+    .hero-main-link .hero-bg { aspect-ratio: 4/3; }
+    .hero-content { padding: 20px 16px; }
+    .hero-headline { font-size: 22px; }
+    .hero-desc { display: none; }
+    .hero-sidebar-item { min-width: 180px; }
+    .hero-sidebar-headline { font-size: 15px; }
+  }
   .hero-main-link { display: block; position: relative; }
   .hero-bg {
     width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;

@@ -70,6 +70,22 @@
   .art-sidebar-item:hover .art-sidebar-title { color: var(--navy-30); text-decoration: underline; }
   .art-sidebar-meta { font-size: 12px; font-family: var(--sans); color: var(--ink-70); margin-top: 3px; }
   .art-footer-spacer { height: 40px; }
+
+  @media (max-width: 900px) {
+    .art-body-wrap { grid-template-columns: 1fr; }
+    .art-body-main { padding-right: 0; border-right: none; padding-bottom: 40px; border-bottom: 1px solid var(--paris-85); }
+    .art-sidebar { padding-left: 0; padding-top: 32px; }
+    .art-title { font-size: 30px; }
+    .art-standfirst { font-size: 18px; }
+  }
+  @media (max-width: 540px) {
+    .art-title { font-size: 24px; }
+    .art-standfirst { font-size: 16px; }
+    .art-text p { font-size: 17px; }
+    .art-text p:first-child::first-letter { font-size: 52px; }
+    .art-header { padding-top: 24px; }
+    .art-share-btn { display: none; }
+  }
 </style>
 @endsection
 

@@ -236,6 +236,14 @@
       color: var(--ink-70);
       border-top: 1px solid #e8e0d0;
     }
+
+    /* ── Mobile ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .pw-card { padding: 32px 24px; }
+      .pw-headline { font-size: 26px; }
+      .pw-price-wrap { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .pw-price-amount { font-size: 26px; }
+    }
   </style>
 </head>
 <body>
